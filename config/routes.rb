@@ -11,4 +11,9 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+  # GET localcalhost:3000/home
+
+  root to: "pages#home"
+#verb
+  get "/profile", to: "pages#profile"
 end
