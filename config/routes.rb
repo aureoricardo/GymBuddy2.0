@@ -16,4 +16,6 @@ Rails.application.routes.draw do
   root to: "pages#home"
 #verb
   get "/profile", to: "pages#profile"
+  get "gyms", to: "gyms#index"
+  get "gyms/:id", to: "gyms#show"
 end
