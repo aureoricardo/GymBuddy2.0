@@ -17,5 +17,10 @@ Rails.application.routes.draw do
 #verb
   get "/profile", to: "pages#profile"
   get "gyms", to: "gyms#index"
-  get "gyms/:id", to: "gyms#show"
+  get "gyms/new", to: "gyms#new"
+  post "gyms", to: "gyms#create"
+  get "gyms/:id", to: "gyms#show", as: :gym
+  get "gyms/:id/edit", to: "gyms#edit"
+  patch "gyms/:id", to: "gyms#update"
+  delete "gyms/:id", to: "gyms#destroy"
 end
