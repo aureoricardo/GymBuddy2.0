@@ -1,10 +1,11 @@
 class GymsController < ApplicationController
+before_action :set_gym, only: [:show,:edit,:update,:destroy]
+
   def index
     @gyms = Gym.all
   end
 
   def show
-    @gym = Gym.find(params[:id])
   end
 
   def new
@@ -14,20 +15,18 @@ class GymsController < ApplicationController
   def create
     @gym = Gym.new(gyms_params)
     @gym.save
-    redirect_to (@gyms_path)
+    redirect_to gyms_path (@gyms_path)
   end
 
   def edit
-    @gym = Gym.find(params[:id])
   end
 
   def update
-    @gym = Gym.find(params[:id])
     @gym.update (gyms_params)
     redirect_to gyms_path (@gyms)
   end
+
   def destroy
-    @gym = Gym.find(params[:id])
     @gym.destroy
     redirect_to gyms_path, status: :see_other
   end
@@ -36,5 +35,9 @@ class GymsController < ApplicationController
 
   def gyms_params
     params.require(:gym).permit(:name, :address, :rating)
+  end
+
+  def set_gym
+    @gym = Gym.find(params[:id])
   end
 end

@@ -15,12 +15,13 @@ Rails.application.routes.draw do
 
   root to: "pages#home"
 #verb
-  get "/profile", to: "pages#profile"
-  get "gyms", to: "gyms#index"
-  get "gyms/new", to: "gyms#new"
-  post "gyms", to: "gyms#create"
-  get "gyms/:id", to: "gyms#show", as: :gym
-  get "gyms/:id/edit", to: "gyms#edit"
-  patch "gyms/:id", to: "gyms#update"
-  delete "gyms/:id", to: "gyms#destroy"
+  #get "/profile", to: "pages#profile"
+  #get "gyms", to: "gyms#index"
+  #get "gyms/new", to: "gyms#new"
+  #post "gyms", to: "gyms#create"
+  #get "gyms/:id", to: "gyms#show", as: :gym
+  #get "gyms/:id/edit", to: "gyms#edit"
+  #patch "gyms/:id", to: "gyms#update"
+  #delete "gyms/:id", to: "gyms#destroy"
+  resources :gyms, except: [:index, :show]
 end
