@@ -1,0 +1,106 @@
+<div class="chat-page">
+
+  <!-- Header -->
+  <div class="chat-header">
+    <%= link_to "←", messages_path, class: "back-button" %>
+    <p class="chat-username"><%= @user.username %></p>
+    <div></div>
+  </div>
+
+  <!-- Messages -->
+  <div class="chat-messages">
+    <% @messages.each do |msg| %>
+      <div class="message <%= msg.sender_id == current_user.id ? 'outgoing' : 'incoming' %>">
+        <p><%= msg.content %></p>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Message Input -->
+  <div class="chat-input">
+    <%= form_with url: messages_path, method: :post, class: "form-inline", local: true do |f| %>
+      <%= hidden_field_tag :receiver_id, @user.id %>
+      <%= f.text_field :content, placeholder: "Message...", class: "input" %>
+      <%= f.submit "📤", class: "send-btn" %>
+    <% end %>
+  </div>
+</div>
+
+<style>
+.chat-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: white;
+}
+
+.chat-header {
+  height: 60px;
+  background: white;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: #f9f9f9;
+}
+
+.message {
+  max-width: 75%;
+  padding: 10px 14px;
+  border-radius: 18px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.incoming {
+  background-color: #e4e6eb;
+  align-self: flex-start;
+}
+
+.outgoing {
+  background-color: #007bff;
+  color: white;
+  align-self: flex-end;
+}
+
+.chat-input {
+  border-top: 1px solid #eee;
+  padding: 10px 16px;
+  display: flex;
+  background: white;
+}
+
+.chat-input .input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 9999px;
+  outline: none;
+}
+
+.send-btn {
+  margin-left: 10px;
+  font-size: 18px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.back-button {
+  text-decoration: none;
+  font-size: 24px;
+}
+</style>
