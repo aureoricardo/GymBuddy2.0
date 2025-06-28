@@ -1,9 +1,13 @@
 source "https://rubygems.org"
 
+ruby "3.4.2"
+
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 7.2.2", ">= 7.2.2.1"
+gem "rails", "~> 8.0.2"
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
+
+gem 'pg'
 # Use sqlite3 as the database for Active Record
 gem "sqlite3", ">= 1.4"
 # Use the Puma web server [https://github.com/puma/puma]
@@ -35,6 +39,26 @@ gem "bootsnap", require: false
 
 #use sassc to process CSS
 gem "sassc-rails"
+
+
+
+# Gemfile
+gem 'dotenv-rails', groups: [:development, :test]
+
+
+
+gem 'devise'
+gem 'tailwindcss-rails'
+
+
+group :development do
+  gem 'rack-livereload'
+end
+
+
+gem 'view_component', '~> 2.0'
+
+
 
 gem "simple_form"
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]

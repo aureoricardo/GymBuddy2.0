@@ -7,3 +7,21 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+
+User.destroy_all
+
+User.create!(
+  username: "alice",
+  avatar_url: "https://i.pravatar.cc/150?img=1"
+)
+
+User.create!(
+  username: "bob",
+  avatar_url: "https://i.pravatar.cc/150?img=2"
+)
+
+User.create!(
+  username: "carla",
+  avatar_url: "https://i.pravatar.cc/150?img=3"
+)

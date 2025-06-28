@@ -1,0 +1,142 @@
+<div class="post">
+
+  <!-- Post Header -->
+  <div class="post-header">
+    <div class="post-user">
+      <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Alex" class="avatar">
+      <p class="username">alex</p>
+    </div>
+    <button class="options">⋮</button>
+  </div>
+
+  <!-- Post Image -->
+  <div class="post-image">
+    <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fgdb.voanews.com%2F5001B077-6795-4BA0-8F2D-8FA4BA0FA28A_w1200_r1.jpg&f=1&nofb=1&ipt=e2d977d094907e3195f57f49503547972fc991aaeb41528fa95bdb6cc24ec9a2" alt="Post image">
+  </div>
+
+  <!-- Post Actions -->
+  <div class="post-actions">
+    <button>❤️</button>
+    <button>💬</button>
+    <button>🔖</button>
+  </div>
+
+  <!-- Post Caption -->
+  <div class="post-caption">
+    <p><span class="username">alex</span> Loves lifting and protein shakes 💪</p>
+  </div>
+
+  <!-- Post Comments -->
+  <div class="post-comments">
+    <p><span class="comment-user">user123</span> Looking strong! 🔥</p>
+    <p><span class="comment-user">fitgirl</span> Motivation 😍</p>
+  </div>
+
+</div>
+
+<style>
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: sans-serif;
+  background-color: #fafafa;
+}
+
+
+.post {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: sans-serif;
+}
+
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+}
+
+.post-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.username {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.options {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: gray;
+  cursor: pointer;
+}
+
+
+.post-image img {
+  width: 100%;
+  height: auto;
+  max-height: 550px;
+  object-fit: cover;
+  background-color: black;
+}
+
+
+.post-actions {
+  display: flex;
+  gap: 16px;
+  padding: 12px 16px;
+  font-size: 22px;
+}
+
+.post-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+
+.post-caption {
+  padding: 0 16px 8px;
+  font-size: 14px;
+}
+
+.post-caption .username {
+  font-weight: bold;
+  margin-right: 6px;
+}
+
+
+.post-comments {
+  padding: 0 16px 16px;
+  font-size: 14px;
+  color: #555;
+}
+
+.comment-user {
+  font-weight: bold;
+  margin-right: 6px;
+}
+
+
+
+</style>
