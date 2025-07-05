@@ -1,0 +1,96 @@
+<div id="map" style="height: 100vh;"></div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const gyms = <%= raw(@gyms.to_json) %>;
+    const followedUsers = <%= raw(@followed_users.to_json) %>;
+
+    const map = L.map('map').setView([38.7169, -9.1399], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Add gym markers
+    gyms.forEach(gym => {
+      const icon = L.icon({
+        iconUrl: gym.avatar_url,
+        iconSize: [80, 80],
+        iconAnchor: [20, 40],
+        popupAnchor: [0, -40]
+      });
+
+      const marker = L.marker([gym.latitude, gym.longitude], { icon }).addTo(map);
+
+      // Reverse geocode gym location to get street address
+      fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${gym.latitude}&lon=${gym.longitude}`)
+        .then(response => response.json())
+        .then(data => {
+          const address = data.address;
+          const displayAddress = [
+            address.road || '',
+            address.house_number || '',
+            address.city || '',
+            address.postcode || '',
+            address.country || ''
+          ].filter(Boolean).join(', ');
+
+          const weeklyHoursFormatted = Object.entries(gym.weekly_hours)
+            .map(([day, hours]) => `${day}: ${hours}`)
+            .join('<br>');
+
+          const popupContent = `
+            <div style="min-width:150px;">
+              <strong>${gym.name}</strong><br>
+              ${displayAddress || 'Address not found'}
+              <br><br>
+              ${weeklyHoursFormatted}
+            </div>
+          `;
+
+          marker.bindPopup(popupContent);
+        })
+        .catch(() => {
+          marker.bindPopup(`<strong>${gym.name}</strong><br>Address not found`);
+        });
+    });
+
+    // Add followed users markers
+    followedUsers.forEach(user => {
+      const icon = L.icon({
+        iconUrl: user.avatar_url,
+        iconSize: [80, 80],
+        iconAnchor: [20, 40],
+        popupAnchor: [0, -40]
+      });
+
+      const marker = L.marker([user.latitude, user.longitude], { icon }).addTo(map);
+      marker.bindPopup(`<strong>${user.name}</strong><br>Followed user`);
+    });
+
+    // Show current user location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(position => {
+        const userLat = position.coords.latitude;
+        const userLng = position.coords.longitude;
+
+        const userIcon = L.icon({
+          iconUrl: 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fplatinaline.com%2Fwp-content%2Fuploads%2F2024%2F06%2FIMG_2320.jpg&f=1&ipt=81fd14b64a22c72eeba55f91c017baed10f253b5d6da061aa252cc66fa01cf13',  // replace with your own user icon URL
+          iconSize: [80, 80],
+          iconAnchor: [25, 50],
+          popupAnchor: [0, -50]
+        });
+
+        const userMarker = L.marker([userLat, userLng], { icon: userIcon }).addTo(map);
+        userMarker.bindPopup("<strong>Your location</strong>").openPopup();
+
+        // Optional: center map on user location
+        map.setView([userLat, userLng], 13);
+      }, () => {
+        console.warn('Geolocation permission denied or unavailable');
+      });
+    } else {
+      console.warn('Geolocation not supported');
+    }
+  });
+</script>

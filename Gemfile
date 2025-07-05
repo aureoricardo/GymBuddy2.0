@@ -53,10 +53,14 @@ gem 'tailwindcss-rails'
 
 group :development do
   gem 'rack-livereload'
+gem 'guard'
+gem 'guard-livereload', require: false
 end
 
 
 gem 'view_component', '~> 2.0'
+
+
 
 
 

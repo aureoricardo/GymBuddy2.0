@@ -1,8 +1,0 @@
-<h1>Gym<%= @gym.name %></h1>
-Rating:<%= @gym.rating %>
-Located in: <%= @gym.address %>
-
-<%= link_to 'back to all gyms',gyms_path %>
-<%= link_to "Delete",gym_path(@gym),
-    data: {turbo_method: :delete, turbo_confirm: "Are you sure?"}
-%>

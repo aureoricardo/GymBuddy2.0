@@ -25,3 +25,9 @@ User.create!(
   username: "carla",
   avatar_url: "https://i.pravatar.cc/150?img=3"
 )
+
+Gym.create([
+  { name: 'Fitness Hut Lisboa', latitude: 38.7266, longitude: -9.1522, avatar_url: 'https://example.com/fitness_hut.png' },
+  { name: 'Solinca Lisboa', latitude: 38.7127, longitude: -9.1391, avatar_url: 'https://example.com/solinca.png' },
+  { name: 'Holmes Place Lisbon', latitude: 38.7139, longitude: -9.1479, avatar_url: 'https://example.com/holmes_place.png' }
+])

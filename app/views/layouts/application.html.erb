@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GymBuddy</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+
 
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -16,6 +20,9 @@
     <link href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" rel="stylesheet">
   </head>
 
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <body class="bg-gray-100 text-gray-900 pb-16">
     
     <!-- Header (Top Navbar or Branding) -->
@@ -28,7 +35,7 @@
     <%= render 'shared/mobile_nav' %>
 
     <!-- Settings Menu (Optional sliding drawer) -->
-    <%= render 'shared/settings_menu' if lookup_context.exists?("shared/settings_menu") %>
+    <%= render 'shared/settings_drawer' if lookup_context.exists?("shared/settings_menu") %>
 
     <!-- Scripts -->
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>

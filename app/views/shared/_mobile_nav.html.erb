@@ -1,5 +1,7 @@
 <footer class="footer">
   <nav class="footer-nav">
+
+   
     <%= link_to root_path, class: (current_page?(root_path) ? 'active' : '') + ' footer-link' do %>
       <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path d="M3 9.75L12 3l9 6.75v10.5a1.5 1.5 0 01-1.5 1.5H4.5A1.5 1.5 0 013 20.25V9.75z" />
@@ -7,12 +9,12 @@
       <span class="label">Feed</span>
     <% end %>
 
-    <%= link_to "/messages", class: (current_page?('/messages') ? 'active' : '') + ' footer-link' do %>
+   <%= link_to "/notifications", class: (current_page?('/notifications') ? 'active' : '') + ' footer-link' do %>
       <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h12a2 2 0 012 2z" />
+        <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4s-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
       </svg>
-      <span class="label">Messages</span>
-    <% end %>
+      <span class="label">Notifications</span>
+    <% end %> 
 
     <%= link_to "/workouts", class: (current_page?('/workouts') ? 'active' : '') + ' footer-link' do %>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
@@ -21,14 +23,25 @@
       <span class="label">Workouts</span>
     <% end %>
 
-    <%= link_to "/notifications", class: (current_page?('/notifications') ? 'active' : '') + ' footer-link' do %>
-      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4s-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+    <%= link_to "/map", class: (current_page?('/map') ? 'active' : '') + ' footer-link' do %>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
       </svg>
-      <span class="label">Notifications</span>
+
+      <span class="label">Location</span>
     <% end %>
 
-    <%= link_to "/settings", class: (current_page?('/settings') ? 'active' : '') + ' footer-link' do %>
+    
+    
+    <%= link_to "/messages", class: (current_page?('/messages') ? 'active' : '') + ' footer-link' do %>
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h12a2 2 0 012 2z" />
+      </svg>
+      <span class="label">Messages</span>
+    <% end %>
+
+    <%= link_to "/profile", class: (current_page?('/profile') ? 'active' : '') + ' footer-link' do %>
 
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
 
@@ -36,7 +49,7 @@
 
       </svg>
 
-      <span class="label">Menu</span>
+      <span class="label">++++</span>
     <% end %>
   </nav>
 

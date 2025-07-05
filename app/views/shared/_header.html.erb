@@ -1,19 +1,163 @@
-<header class="bg-white shadow-md py-2 px-4 flex justify-between items-center">
-  <!-- Left: Logo -->
-  <div>
-    <%= link_to root_path do %>
-      <img src="/assets/logo.png" alt="GymBuddy" class="w-10 h-10" />
-    <% end %>
-  </div>
-   
+<div class="app-header">
+  <h1 class="app-title">GymBuddy</h1>
 
-  <!-- Right: Icons -->
-  <div class="flex items-center space-x-6">
-    <%= link_to matches_path do %>
-      <svg class="w-6 h-6 text-gray-800 hover:text-blue-500" ...>...</svg>
+  <div class="header-actions">
+    <% if current_page?(profile_path) %>
+      <a href="<%= settings_path %>" class="settings-button" title="Settings">
+        <svg xmlns="http://www.w3.org/2000/svg" class="settings-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 6V4m0 16v-2m8-8h2m-18 0H2m15.36-6.36l1.42 1.42M6.34 17.66l-1.42 1.42m0-13.08l1.42 1.42M17.66 17.66l-1.42 1.42M12 8a4 4 0 100 8 4 4 0 000-8z" />
+        </svg>
+      </a>
     <% end %>
-    <%= link_to matches_path do %>
-      <svg class="w-6 h-6 text-gray-800 hover:text-blue-500" ...>...</svg>
-    <% end %>
+
+    <div id="suggestion-wrapper">
+      <button id="suggestion-toggle" class="icon-button" title="Submit a suggestion">
+        💡
+      </button>
+
+      <form id="suggestion-form" action="<%= suggestions_path %>" method="post" style="display: none;">
+        <%= csrf_meta_tags %>
+        <textarea name="content" placeholder="Write your suggestion..." required rows="1"></textarea>
+        <div class="form-buttons">
+          <button type="submit">Send</button>
+          <button type="button" id="suggestion-cancel">Cancel</button>
+        </div>
+      </form>
+    </div>
   </div>
-</header>
+
+  
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const toggleBtn = document.getElementById('suggestion-toggle');
+    const form = document.getElementById('suggestion-form');
+    const cancelBtn = document.getElementById('suggestion-cancel');
+
+    toggleBtn.addEventListener('click', () => {
+      toggleBtn.style.display = 'none';
+      form.style.display = 'flex';
+      form.querySelector('textarea').focus();
+    });
+
+    cancelBtn.addEventListener('click', () => {
+      form.style.display = 'none';
+      toggleBtn.style.display = 'inline-block';
+      form.reset();
+    });
+
+    form.addEventListener('submit', () => {
+      // you can add AJAX submit here if you want to prevent page reload
+    });
+  });
+</script>
+
+<style>
+  #suggestion-wrapper {
+    display: flex;
+    align-items: center;
+  }
+
+  .icon-button {
+    font-size: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    user-select: none;
+    padding: 6px;
+  }
+
+  #suggestion-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #ccc;
+    padding: 6px 8px;
+    border-radius: 8px;
+    background: white;
+    width: 400px;
+  }
+
+  #suggestion-form textarea {
+    flex-grow: 1;
+    height: 32px;
+    resize: none;
+    font-size: 14px;
+    padding: 4px 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    line-height: 1.2;
+  }
+
+  .form-buttons {
+    display: flex;
+    gap: 6px;
+  }
+
+  #suggestion-form button {
+    height: 32px;
+    padding: 0 12px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.2s ease;
+  }
+
+  #suggestion-form button[type="button"] {
+    background-color: #ccc;
+    color: #333;
+    border-color: #bbb;
+  }
+
+  #suggestion-form button[type="button"]:hover {
+    background-color: #bbb;
+  }
+
+  #suggestion-form button[type="submit"]:hover {
+    background-color: #0056b3;
+  }
+
+  .app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 56px;
+    padding: 0 16px;
+    background-color: white;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .app-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .settings-button {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 6px;
+    color: #333;
+  }
+
+  .settings-icon {
+    width: 24px;
+    height: 24px;
+    stroke: currentColor;
+  }
+</style>
