@@ -1,27 +1,42 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  get "workouts/index"
+  get "notifications/index"
+  # Health check route
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # Render dynamic PWA files from app/views/pwa/*
+  # PWA routes
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 
-  # Defines the root path route ("/")
-  # root "posts#index"
-  # GET localcalhost:3000/home
-
+  # Root route (home page)
   root to: "pages#home"
-#verb
-  #get "/profile", to: "pages#profile"
-  #get "gyms", to: "gyms#index"
-  #get "gyms/new", to: "gyms#new"
-  #post "gyms", to: "gyms#create"
-  #get "gyms/:id", to: "gyms#show", as: :gym
-  #get "gyms/:id/edit", to: "gyms#edit"
-  #patch "gyms/:id", to: "gyms#update"
-  #delete "gyms/:id", to: "gyms#destroy"
+
+  # Routes for pages
+  get "/profile", to: "pages#profile", as: :profile  # Add this line
+  get 'profile_tab', to: 'pages#profile_tab'
+
+  
+
+   get '/map', to: 'map#index', as: :map
+
+  get "/messages", to: "messages#index", as: :messages  # Add this line
+  get "/messages/:id", to: "messages#show", as: :message  # Add this line
+  post "/update_location", to: "users#update_location"
+
+  get '/workouts', to: 'workouts#index', as: :workouts
+  get "/settings", to: "pages#settings", as: :settings  # Add this line
+
+  # Resources for gyms
+  resources :messages, only: [:index, :show, :create]
+  resources :notifications, only: [:index]
+  resources :suggestions, only: [:create]
+
+
+  resources :users, only: [] do
+  post :update_location, on: :collection
+end
+
+
+
   resources :gyms, except: [:index, :show]
 end

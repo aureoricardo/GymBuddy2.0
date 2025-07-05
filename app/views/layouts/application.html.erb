@@ -1,23 +1,90 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title><%= content_for(:title) || "Gym Buddy2 0" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GymBuddy</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- MapLibre GL CSS -->
+<link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
+
+<!-- MapLibre GL JS -->
+<script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+
+
+
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <%= yield :head %>
-
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
+    <!-- Stylesheets -->
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %>
+
+    <!-- External CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" rel="stylesheet">
   </head>
 
-  <body>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <body class="<%= 'workouts-page' if current_page?(workouts_path) %> bg-gray-100 text-gray-900 pb-16">
+    
+    <!-- Header (Top Navbar or Branding) -->
+    <%= render 'shared/header' %>
+
+    <!-- Main Page Content -->
     <%= yield %>
+
+    <!-- Mobile Navigation Footer -->
+    <%= render 'shared/mobile_nav' %>
+
+    <!-- Settings Menu (Optional sliding drawer) -->
+    <%= render 'shared/settings_drawer' if lookup_context.exists?("shared/settings_menu") %>
+
+    <!-- Scripts -->
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const swiper = new Swiper('.mySwiper', {
+          direction: 'horizontal',
+          slidesPerView: 1,
+          spaceBetween: 0,
+          loop: false,
+          allowTouchMove: true,
+          centeredSlides: true,
+          effect: 'slide',
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true
+          }
+        });
+
+        const likeBtn = document.getElementById('likeBtn');
+        const dislikeBtn = document.getElementById('dislikeBtn');
+
+        if (likeBtn) {
+          likeBtn.addEventListener('click', () => swiper.slideNext());
+        }
+
+        if (dislikeBtn) {
+          dislikeBtn.addEventListener('click', () => swiper.slideNext());
+        }
+      });
+
+    
+<script>
+  function navigateTo(path) {
+    window.location.href = path;
+  }
+
+      function navigateTo(path) {
+        window.location.href = path;
+      }
+    </script>
   </body>
 </html>

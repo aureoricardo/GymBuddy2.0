@@ -1,0 +1,193 @@
+<!-- Profile Header -->
+<div class="profile-header">
+  <img src="<%= @user.avatar_url || 'default-avatar.png' %>" class="profile-avatar" alt="Avatar">
+
+  <div class="profile-info">
+  <h2 class="username"><%= @user.username %></h2>
+  <p class="bio"><%= @user.bio %></p>
+
+  <!-- Follow Stats -->
+  <div class="follow-stats">
+    <div><strong>52</strong><span>Posts</span></div>
+    <div><strong>341</strong><span>Followers</span></div>
+    <div><strong>128</strong><span>Following</span></div>
+  </div>
+
+  <!-- Lifting Stats -->
+  <div class="lifting-stats">
+    <div class="stat-box">
+      <strong>Deadlift</strong>
+      <span>180kg</span>
+    </div>
+    <div class="stat-box">
+      <strong>Bench</strong>
+      <span>110kg</span>
+    </div>
+    <div class="stat-box">
+      <strong>Squat</strong>
+      <span>150kg</span>
+    </div>
+  </div>
+  </div>
+</div>
+
+
+<!-- Profile Navigation Tabs -->
+<div class="profile-tabs">
+  <a href="?tab=posts" class="<%= params[:tab] == 'posts' || !params[:tab] ? 'tab active' : 'tab' %>">Posts</a>
+  <a href="?tab=tagged" class="<%= params[:tab] == 'tagged' ? 'tab active' : 'tab' %>">Tagged</a>
+  <a href="?tab=saved" class="<%= params[:tab] == 'saved' ? 'tab active' : 'tab' %>">Saved</a>
+</div>
+
+<!-- Posts Grid -->
+<div class="posts-grid">
+  <% @posts.each do |post| %>
+    <img src="<%= post.image_url %>" class="post-thumb" alt="Post">
+  <% end %>
+</div>
+
+
+
+
+
+
+
+<style>
+
+.follow-stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+.follow-stats div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.follow-stats strong {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.follow-stats span {
+  font-size: 12px;
+  color: #666;
+}
+
+/* Lifting Stats */
+.lifting-stats {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.stat-box {
+  flex: 1;
+  background: #f3f3f3;
+  padding: 8px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.stat-box strong {
+  display: block;
+  font-size: 13px;
+  color: #444;
+}
+
+.stat-box span {
+  font-size: 15px;
+  font-weight: bold;
+  color: #111;
+}
+
+
+
+
+
+.profile-tabs {
+  display: flex;
+  justify-content: space-around;
+  border-top: 0px solid #eee;
+  border-bottom: 0px solid #eee;
+  background: #fff;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 12px 0;
+  font-size: 14px;
+  color: #666;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.tab:hover {
+  background-color: #f9f9f9;
+}
+
+.tab.active {
+  font-weight: bold;
+  color: #000;
+  border-bottom: 10px solid #000;
+}
+
+
+
+
+.profile-header {
+  display: flex;
+  flex-direction: column
+  align-items: center;
+  padding: 16px;
+  background: white;
+  border-bottom: 0px solid #eee;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.profile-info {
+  flex: 1;
+  margin-left: 12px;
+}
+.username {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+}
+.bio {
+  font-size: 14px;
+  color: #555;
+  margin-top: 4px;
+}
+
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  margin-top: 0px;
+  overflow: hidden;
+}
+
+.post-thumb {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+.post-thumb:hover {
+  transform: scale(1.05);
+}
+</style>
