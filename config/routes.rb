@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "workouts/index"
   get "notifications/index"
   # Health check route
   get "up" => "rails/health#show", as: :rails_health_check
@@ -22,7 +23,7 @@ Rails.application.routes.draw do
   get "/messages/:id", to: "messages#show", as: :message  # Add this line
   post "/update_location", to: "users#update_location"
 
-  get "/workouts", to: "pages#workouts", as: :workouts
+  get '/workouts', to: 'workouts#index', as: :workouts
   get "/settings", to: "pages#settings", as: :settings  # Add this line
 
   # Resources for gyms

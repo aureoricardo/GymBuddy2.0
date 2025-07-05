@@ -1,5 +1,13 @@
+
+require 'ostruct'
+
+
 class MapController < ApplicationController
   def index
+
+    # In your controller:
+    @maptiler_key = ENV['MAPTILER_API_KEY']
+
 
 
     # Example structure for @followed_users (replace with your actual data)

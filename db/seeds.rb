@@ -31,3 +31,5 @@ Gym.create([
   { name: 'Solinca Lisboa', latitude: 38.7127, longitude: -9.1391, avatar_url: 'https://example.com/solinca.png' },
   { name: 'Holmes Place Lisbon', latitude: 38.7139, longitude: -9.1479, avatar_url: 'https://example.com/holmes_place.png' }
 ])
+
+

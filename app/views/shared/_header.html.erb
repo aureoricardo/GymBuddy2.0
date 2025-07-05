@@ -1,5 +1,7 @@
-<div class="app-header">
-  <h1 class="app-title">GymBuddy</h1>
+<div class="app-header <%= 'transparent' if current_page?(workouts_path) %>">
+  <% unless current_page?(workouts_path) %>
+    <h1 class="app-title">GymBuddy</h1>
+  <% end %>
 
   <div class="header-actions">
     <% if current_page?(profile_path) %>
@@ -11,117 +13,85 @@
       </a>
     <% end %>
 
-    <div id="suggestion-wrapper">
-      <button id="suggestion-toggle" class="icon-button" title="Submit a suggestion">
-        💡
-      </button>
+    <% if current_page?(workouts_path) %>
+      <div class="input-wrapper">
+        <input id="shared-input" type="text" name="query" placeholder="" autocomplete="off" style="display:none;" />
+        <form id="suggest-form" action="<%= suggestions_path %>" method="post" style="display:none;" class="suggest-form">
+          <%= csrf_meta_tags %>
+          <textarea id="shared-textarea" name="content" placeholder="Write your suggestion..." rows="1" required></textarea>
+          <div class="form-buttons">
+            <button type="submit">Send</button>
+          </div>
+        </form>
+      </div>
 
-      <form id="suggestion-form" action="<%= suggestions_path %>" method="post" style="display: none;">
-        <%= csrf_meta_tags %>
-        <textarea name="content" placeholder="Write your suggestion..." required rows="1"></textarea>
-        <div class="form-buttons">
-          <button type="submit">Send</button>
-          <button type="button" id="suggestion-cancel">Cancel</button>
-        </div>
-      </form>
-    </div>
+      <div id="action-buttons" class="action-buttons">
+        <button id="search-btn" class="icon-button" title="Search">🔍</button>
+        <button id="suggest-btn" class="icon-button" title="Suggest">💡</button>
+      </div>
+    <% end %>
   </div>
-
-  
 </div>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const toggleBtn = document.getElementById('suggestion-toggle');
-    const form = document.getElementById('suggestion-form');
-    const cancelBtn = document.getElementById('suggestion-cancel');
+    const input = document.getElementById('shared-input');
+    const suggestForm = document.getElementById('suggest-form');
+    const textarea = document.getElementById('shared-textarea');
+   
 
-    toggleBtn.addEventListener('click', () => {
-      toggleBtn.style.display = 'none';
-      form.style.display = 'flex';
-      form.querySelector('textarea').focus();
+    const searchBtn = document.getElementById('search-btn');
+    const suggestBtn = document.getElementById('suggest-btn');
+
+    function reset() {
+      input.style.display = 'none';
+      input.value = '';
+      suggestForm.style.display = 'none';
+      textarea.value = '';
+    }
+
+    function showSearch() {
+      reset();
+      input.style.display = 'block';
+      input.placeholder = 'Search workouts...';
+      input.name = 'query';
+      input.focus();
+    }
+
+    function showSuggest() {
+      reset();
+      suggestForm.style.display = 'flex';
+      textarea.focus();
+    }
+
+    suggestForm.addEventListener('submit', (e) => {
+  // You can add e.preventDefault() here if you want to handle ajax submit instead
+  reset();
+});
+
+
+
+    searchBtn.addEventListener('click', () => {
+      // Toggle search input visibility
+      if (input.style.display === 'block') {
+        reset();
+      } else {
+        showSearch();
+      }
     });
 
-    cancelBtn.addEventListener('click', () => {
-      form.style.display = 'none';
-      toggleBtn.style.display = 'inline-block';
-      form.reset();
-    });
-
-    form.addEventListener('submit', () => {
-      // you can add AJAX submit here if you want to prevent page reload
+    suggestBtn.addEventListener('click', () => {
+      // Toggle suggest textarea visibility
+      if (suggestForm.style.display === 'flex') {
+        reset();
+      } else {
+        showSuggest();
+      }
     });
   });
 </script>
 
 <style>
-  #suggestion-wrapper {
-    display: flex;
-    align-items: center;
-  }
-
-  .icon-button {
-    font-size: 20px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    user-select: none;
-    padding: 6px;
-  }
-
-  #suggestion-form {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    border: 1px solid #ccc;
-    padding: 6px 8px;
-    border-radius: 8px;
-    background: white;
-    width: 400px;
-  }
-
-  #suggestion-form textarea {
-    flex-grow: 1;
-    height: 32px;
-    resize: none;
-    font-size: 14px;
-    padding: 4px 6px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    line-height: 1.2;
-  }
-
-  .form-buttons {
-    display: flex;
-    gap: 6px;
-  }
-
-  #suggestion-form button {
-    height: 32px;
-    padding: 0 12px;
-    font-size: 14px;
-    cursor: pointer;
-    border-radius: 4px;
-    border: 1px solid transparent;
-    background-color: #007bff;
-    color: white;
-    transition: background-color 0.2s ease;
-  }
-
-  #suggestion-form button[type="button"] {
-    background-color: #ccc;
-    color: #333;
-    border-color: #bbb;
-  }
-
-  #suggestion-form button[type="button"]:hover {
-    background-color: #bbb;
-  }
-
-  #suggestion-form button[type="submit"]:hover {
-    background-color: #0056b3;
-  }
-
   .app-header {
     display: flex;
     justify-content: space-between;
@@ -133,7 +103,22 @@
     position: sticky;
     top: 0;
     z-index: 50;
+    transition: background-color 0.3s ease;
   }
+
+.app-header.transparent {
+  background-color: rgba(0, 0, 0, 0); /* translucent black */
+  border-bottom: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+  color: white; /* make sure icons/text are visible */
+}
+
 
   .app-title {
     font-size: 18px;
@@ -145,6 +130,109 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    flex-grow: 1;
+    justify-content: flex-end;
+    max-width: 100%;
+  }
+
+  #action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+.input-wrapper {
+  flex-grow: 1;
+  max-width: 400px;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+
+  /* Add these: */
+  min-width: 0;          /* Allow shrinking inside flex container */
+  box-sizing: border-box;
+  overflow: hidden;      /* Prevent overflow */
+}
+
+  #shared-input {
+    width: 100%;
+    height: 32px;
+    font-size: 14px;
+    padding: 4px 8px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    line-height: 1.2;
+    box-sizing: border-box;
+  }
+
+.suggest-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: white;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0; /* prevent overflow */
+}
+
+#shared-textarea {
+  flex-grow: 1;
+  flex-shrink: 1; /* allow shrinking */
+  min-width: 0; /* VERY important to prevent overflow inside flex */
+  height: 32px;
+  font-size: 14px;
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  line-height: 1.2;
+  resize: none;
+}
+
+
+.form-buttons {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0; /* prevent shrinking, keep buttons visible */
+}
+
+  .suggest-form button {
+    height: 32px;
+    padding: 0 12px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    cursor: pointer;
+  }
+
+  .suggest-form button[type="submit"] {
+    background-color: #007bff;
+    color: white;
+  }
+
+  .suggest-form button[type="submit"]:hover {
+    background-color: #0056b3;
+  }
+
+  .suggest-form button[type="button"] {
+    background-color: #ccc;
+    color: #333;
+  }
+
+  .suggest-form button[type="button"]:hover {
+    background-color: #bbb;
+  }
+
+  .icon-button {
+    font-size: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    user-select: none;
+    padding: 6px;
   }
 
   .settings-button {

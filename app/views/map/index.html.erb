@@ -2,95 +2,88 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
+
+    
+
+    const map = new maplibregl.Map({
+      container: 'map',
+      style: 'https://api.maptiler.com/maps/0197dc4f-0ce4-70c9-a239-09a2d13b45ac/style.json?key=rV7Z75PDcrUL71JirPKw',
+      center: [-9.1399, 38.7169], // lng, lat
+      zoom: 13
+    });
+
+    // Add navigation controls (zoom buttons)
+    map.addControl(new maplibregl.NavigationControl());
+
+    // Add gym markers and followed users markers with custom icons & popups
     const gyms = <%= raw(@gyms.to_json) %>;
     const followedUsers = <%= raw(@followed_users.to_json) %>;
 
-    const map = L.map('map').setView([38.7169, -9.1399], 13);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
-
-    // Add gym markers
     gyms.forEach(gym => {
-      const icon = L.icon({
-        iconUrl: gym.avatar_url,
-        iconSize: [80, 80],
-        iconAnchor: [20, 40],
-        popupAnchor: [0, -40]
-      });
+      const el = document.createElement('div');
+      el.style.backgroundImage = `url(${gym.avatar_url})`;
+      el.style.width = '50px';
+      el.style.height = '50px';
+      el.style.backgroundSize = 'cover';
+      el.style.borderRadius = '50%';
+      el.style.border = '2px solid white';
+      el.style.boxShadow = '0 0 5px rgba(0,0,0,0.3)';
+      el.style.cursor = 'pointer';
 
-      const marker = L.marker([gym.latitude, gym.longitude], { icon }).addTo(map);
-
-      // Reverse geocode gym location to get street address
-      fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${gym.latitude}&lon=${gym.longitude}`)
-        .then(response => response.json())
-        .then(data => {
-          const address = data.address;
-          const displayAddress = [
-            address.road || '',
-            address.house_number || '',
-            address.city || '',
-            address.postcode || '',
-            address.country || ''
-          ].filter(Boolean).join(', ');
-
-          const weeklyHoursFormatted = Object.entries(gym.weekly_hours)
-            .map(([day, hours]) => `${day}: ${hours}`)
-            .join('<br>');
-
-          const popupContent = `
-            <div style="min-width:150px;">
-              <strong>${gym.name}</strong><br>
-              ${displayAddress || 'Address not found'}
-              <br><br>
-              ${weeklyHoursFormatted}
-            </div>
-          `;
-
-          marker.bindPopup(popupContent);
-        })
-        .catch(() => {
-          marker.bindPopup(`<strong>${gym.name}</strong><br>Address not found`);
-        });
+      const marker = new maplibregl.Marker(el)
+        .setLngLat([gym.longitude, gym.latitude])
+        .setPopup(new maplibregl.Popup({ offset: 25 }).setHTML(`
+          <strong>${gym.name}</strong><br>
+          <em>Weekly Hours:</em><br>
+          ${Object.entries(gym.weekly_hours).map(([day, hours]) => `${day}: ${hours}`).join('<br>')}
+        `))
+        .addTo(map);
     });
 
-    // Add followed users markers
     followedUsers.forEach(user => {
-      const icon = L.icon({
-        iconUrl: user.avatar_url,
-        iconSize: [80, 80],
-        iconAnchor: [20, 40],
-        popupAnchor: [0, -40]
-      });
+      const el = document.createElement('div');
+      el.style.backgroundImage = `url(${user.avatar_url})`;
+      el.style.width = '50px';
+      el.style.height = '50px';
+      el.style.backgroundSize = 'cover';
+      el.style.borderRadius = '50%';
+      el.style.border = '2px solid white';
+      el.style.boxShadow = '0 0 5px rgba(0,0,0,0.3)';
+      el.style.cursor = 'pointer';
 
-      const marker = L.marker([user.latitude, user.longitude], { icon }).addTo(map);
-      marker.bindPopup(`<strong>${user.name}</strong><br>Followed user`);
+      const marker = new maplibregl.Marker(el)
+        .setLngLat([user.longitude, user.latitude])
+        .setPopup(new maplibregl.Popup({ offset: 25 }).setHTML(`
+          <strong>${user.name}</strong><br>
+          Followed user
+        `))
+        .addTo(map);
     });
 
-    // Show current user location
+    // Show current user location if available
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(position => {
-        const userLat = position.coords.latitude;
         const userLng = position.coords.longitude;
+        const userLat = position.coords.latitude;
 
-        const userIcon = L.icon({
-          iconUrl: 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fplatinaline.com%2Fwp-content%2Fuploads%2F2024%2F06%2FIMG_2320.jpg&f=1&ipt=81fd14b64a22c72eeba55f91c017baed10f253b5d6da061aa252cc66fa01cf13',  // replace with your own user icon URL
-          iconSize: [80, 80],
-          iconAnchor: [25, 50],
-          popupAnchor: [0, -50]
-        });
+        const el = document.createElement('div');
+        el.style.backgroundImage = 'url(https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fplatinaline.com%2Fwp-content%2Fuploads%2F2024%2F06%2FIMG_2320.jpg&f=1&ipt=81fd14b64a22c72eeba55f91c017baed10f253b5d6da061aa252cc66fa01cf13)';
+        el.style.width = '50px';
+        el.style.height = '50px';
+        el.style.backgroundSize = 'cover';
+        el.style.borderRadius = '50%';
+        el.style.border = '2px solid white';
+        el.style.boxShadow = '0 0 5px rgba(0,0,0,0.3)';
+        el.style.cursor = 'pointer';
 
-        const userMarker = L.marker([userLat, userLng], { icon: userIcon }).addTo(map);
-        userMarker.bindPopup("<strong>Your location</strong>").openPopup();
+        new maplibregl.Marker(el)
+          .setLngLat([userLng, userLat])
+          .setPopup(new maplibregl.Popup({ offset: 25 }).setText("Your location"))
+          .addTo(map);
 
-        // Optional: center map on user location
-        map.setView([userLat, userLng], 13);
-      }, () => {
-        console.warn('Geolocation permission denied or unavailable');
+        // Center map on user location
+        map.flyTo({ center: [userLng, userLat], zoom: 13 });
       });
-    } else {
-      console.warn('Geolocation not supported');
     }
   });
 </script>
