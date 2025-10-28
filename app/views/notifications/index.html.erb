@@ -3,11 +3,11 @@
 
   <% @notifications.each do |notification| %>
     <div class="notification">
-      <img src="<%= notification.user.avatar_url || 'default-avatar.png' %>" alt="Profile" class="avatar">
+<%= image_tag(notification.actor.avatar.attached? ? url_for(notification.actor.avatar) : 'default-avatar.png', class: 'avatar') %>
 
       <div class="notification-content">
         <p>
-          <strong><%= notification.user.username %></strong>
+          <strong><%= notification.actor.username %></strong>
           <%= notification.message %>
         </p>
         <span class="timestamp"><%= time_ago_in_words(notification.created_at) %> ago</span>

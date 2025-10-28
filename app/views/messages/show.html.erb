@@ -18,10 +18,19 @@
 
   <!-- Message Input -->
   <div class="chat-input">
+    <div>
+
     <%= form_with url: messages_path, method: :post, class: "form-inline", local: true do |f| %>
       <%= hidden_field_tag :receiver_id, @user.id %>
       <%= f.text_field :content, placeholder: "Message...", class: "input" %>
-      <%= f.submit "📤", class: "send-btn" %>
+      
+    </div>
+
+      
+      <div>
+        <%= f.submit "📤", class: "send-btn" %>
+
+      </div>
     <% end %>
   </div>
 </div>
@@ -80,6 +89,9 @@
   border-top: 1px solid #eee;
   padding: 10px 16px;
   display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
   background: white;
 }
 

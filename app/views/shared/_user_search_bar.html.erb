@@ -1,0 +1,145 @@
+<div id="user-search-container" class="user-search-container">
+  <button id="toggle-user-search" class="settings-button" title="Search Users">
+    🔍
+  </button>
+
+  <div id="user-search-box" class="user-search-box hidden">
+    <input
+      id="user-search-input"
+      type="text"
+      placeholder="Search users..."
+      autocomplete="off"
+      class="user-search-input"
+    />
+    <ul id="user-search-results" class="user-search-results"></ul>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const toggleBtn = document.getElementById("toggle-user-search");
+    const searchBox = document.getElementById("user-search-box");
+    const searchInput = document.getElementById("user-search-input");
+    const resultsList = document.getElementById("user-search-results");
+
+    toggleBtn.addEventListener("click", () => {
+      searchBox.classList.toggle("hidden");
+      if (!searchBox.classList.contains("hidden")) {
+        searchInput.focus();
+      } else {
+        resultsList.innerHTML = "";
+      }
+    });
+
+    let timeout = null;
+    searchInput.addEventListener("input", () => {
+      clearTimeout(timeout);
+      const query = searchInput.value.trim();
+      if (query.length < 2) {
+        resultsList.innerHTML = "";
+        return;
+      }
+
+      // wait 300ms after typing stops
+      timeout = setTimeout(() => {
+        fetch(`/users/search?q=${encodeURIComponent(query)}`)
+          .then(res => res.json())
+          .then(data => {
+            resultsList.innerHTML = "";
+            if (data.length === 0) {
+              resultsList.innerHTML = "<li class='no-results'>No users found</li>";
+              return;
+            }
+
+            data.forEach(user => {
+              const li = document.createElement("li");
+              li.className = "user-result";
+              li.innerHTML = `
+                <a href="/users/${user.id}">
+                  <img src="${user.avatar_url || '/default-avatar.png'}" class="user-avatar" />
+                  <span>${user.username}</span>
+                </a>`;
+              resultsList.appendChild(li);
+            });
+          });
+      }, 300);
+    });
+  });
+</script>
+
+<style>
+.user-search-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.user-search-box {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  padding: 10px;
+  flex-direction: column;
+  width: 250px;
+  z-index: 1000;
+}
+
+.user-search-box.hidden {
+  display: none;
+}
+
+.user-search-input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 8px;
+}
+
+.user-search-results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.user-result {
+  display: flex;
+  align-items: center;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.user-result:hover {
+  background: #f2f2f2;
+}
+
+.user-result a {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.no-results {
+  text-align: center;
+  color: #777;
+  font-size: 14px;
+}
+</style>

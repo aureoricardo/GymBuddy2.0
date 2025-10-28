@@ -1,0 +1,122 @@
+<div class="posts-grid">
+  <% current_user.posts.order(created_at: :desc).each do |post| %>
+    <% if post.image.attached? %>
+      <div class="post-thumb-wrapper" data-post-id="<%= post.id %>">
+        <% if post.image.content_type.start_with?('image') %>
+          <img src="<%= url_for(post.image) %>" class="post-thumb" alt="Post image">
+        <% else %>
+          <video class="post-thumb" muted preload="metadata">
+            <source src="<%= url_for(post.image) %>" type="<%= post.image.content_type %>">
+          </video>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+
+
+<div id="postModal" class="modal hidden">
+  <div class="modal-content">
+    <button id="closeModal" class="close-btn">×</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+
+<script>
+
+  document.querySelectorAll(".post-thumb-wrapper").forEach(item => {
+  item.addEventListener("click", () => {
+    const postId = item.dataset.postId;
+
+    fetch(`/posts/${postId}`)
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById("modalBody").innerHTML = html;
+        const modal = document.getElementById("postModal");
+        modal.classList.remove("hidden");
+
+        setTimeout(() => modal.classList.add("show"), 10);
+      });
+  });
+});
+
+document.getElementById("closeModal").addEventListener("click", () => {
+  const modal = document.getElementById("postModal");
+  modal.classList.remove("show");
+  setTimeout(() => modal.classList.add("hidden"), 300);
+});
+
+
+</script>
+
+
+<style>
+
+
+  .modal {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(4px);
+  transition: right 0.35s ease;
+  z-index: 9999;
+}
+
+.modal.show {
+  right: 0;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: white;
+  width: 90%;
+  max-width: 600px;
+  border-radius: 16px;
+  padding: 20px;
+  animation: slideIn 0.35s ease;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  float: right;
+  cursor: pointer;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(50px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+
+
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  margin-top: 0px;
+  overflow: hidden;
+}
+
+.post-thumb {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+.post-thumb:hover {
+  transform: scale(1.05);
+}
+</style>

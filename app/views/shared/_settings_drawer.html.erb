@@ -1,0 +1,282 @@
+<!-- Overlay (background behind modal) -->
+<div id="overlay" class="overlayy"></div>
+
+<!-- Settings Modal -->
+<div id="settingsMenu" class="settings-menu">
+  <div class="settings-header">
+    <h2>Settings</h2>
+    <button onclick="toggleSettingsMenu()" class="close-btn">&times;</button>
+  </div>
+
+  <div class="section">
+    <button class="settings-btn">👤 Profile</button>
+    <button class="settings-btn">⚙️ Account Settings</button>
+    <button class="settings-btn">🔒 Privacy Policy</button>
+     <!-- 🚪 Logout button with Rails form -->
+    <%= button_to "🚪 Logout", destroy_user_session_path,
+      method: :delete,
+      class: "settings-btn logout-btn",
+      form: { "data-turbo" => "false", style: "margin:0;" } %>
+  </div>
+</div>
+
+<!-- Fullscreen Modals -->
+<div id="profileModal" class="fullscreen-modal">
+  <div class="modal-header">
+    <h2>Profile</h2>
+    <button onclick="closeModal('profileModal')" class="close-btn">&times;</button>
+  </div>
+  <div class="modal-body">
+    <p>Profile settings go here...</p>
+  </div>
+</div>
+
+<div id="accountModal" class="fullscreen-modal">
+  <div class="modal-header">
+    <h2>Account Settings</h2>
+    <button onclick="closeModal('accountModal')" class="close-btn">&times;</button>
+  </div>
+  <div class="modal-body">
+    <p>Account settings go here...</p>
+  </div>
+</div>
+
+<div id="privacyModal" class="fullscreen-modal">
+  <div class="modal-header">
+    <h2>Privacy Policy</h2>
+    <button onclick="closeModal('privacyModal')" class="close-btn">&times;</button>
+  </div>
+  <div class="modal-body">
+    <p>Privacy policy details go here...</p>
+  </div>
+</div>
+
+<style>
+
+
+
+
+
+   .fullscreen-modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #fff;
+    z-index: 2000;
+    display: none;
+    flex-direction: column;
+    animation: slideUp 0.3s ease forwards;
+  }
+  .fullscreen-modal.open { display: flex; }
+
+  @keyframes slideUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: #f9f9f9;
+    border-bottom: 1px solid #eee;
+  }
+
+  .modal-body {
+    padding: 20px;
+    flex-grow: 1;
+    overflow-y: auto;
+  }
+
+
+
+
+
+
+
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+
+  /* 🔲 Overlay behind the modal */
+  .overlayy {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 999;
+  }
+  .overlayy.show {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* ⚙️ Settings modal container */
+  .settings-menu {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    background: #fff;
+    width: 350px;
+    max-width: 90%;
+    padding: 24px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    z-index: 1000;
+    display: none;
+    flex-direction: column;
+    animation: fadeInScale 0.3s ease forwards;
+  }
+
+  .settings-menu.open {
+    display: flex;
+  }
+
+  @keyframes fadeInScale {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.85);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+
+  /* Header */
+  .settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+
+  .settings-header h2 {
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+  }
+
+  /* Buttons section */
+  .section {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .settings-btn {
+    padding: 16px;
+    font-size: 18px;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    background: #f4f4f4;
+    transition: background 0.2s ease, transform 0.2s ease;
+    text-align: left;
+  }
+
+  .settings-btn:hover {
+    background: #e6e6e6;
+    transform: translateY(-2px);
+  }
+
+  .logout-btn {
+    background: #ffdddd;
+    color: #c00;
+    font-weight: bold;
+  }
+
+  .logout-btn:hover {
+    background: #ffcccc;
+  }
+
+  /* Button to open menu */
+  .open-menu-btn {
+    margin: 50px auto;
+    display: block;
+    padding: 12px 20px;
+    font-size: 18px;
+    border: none;
+    background: #007bff;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .open-menu-btn:hover {
+    background: #0056b3;
+  }
+</style>
+
+<script>
+  function toggleSettingsMenu() {
+    const menu = document.getElementById("settingsMenu");
+    const overlay = document.getElementById("overlay");
+
+    const isOpen = menu.classList.contains("open");
+    closeAll(); // close everything first
+
+    if (!isOpen) {
+      menu.classList.add("open");
+      overlay.classList.add("show");
+    }
+  }
+
+  function openModal(id) {
+    closeAll(); // close menu before opening modal
+    document.getElementById(id).classList.add("open");
+    document.getElementById("overlay").classList.add("show");
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).classList.remove("open");
+    closeOverlayIfNoOpen();
+  }
+
+  function closeAll() {
+    // close all modals
+    document.querySelectorAll(".fullscreen-modal.open")
+      .forEach(modal => modal.classList.remove("open"));
+    // close settings
+    document.getElementById("settingsMenu").classList.remove("open");
+    // hide overlay
+    document.getElementById("overlay").classList.remove("show");
+  }
+
+  function closeOverlayIfNoOpen() {
+    const anyOpen = document.querySelector(".fullscreen-modal.open, #settingsMenu.open");
+    if (!anyOpen) {
+      document.getElementById("overlay").classList.remove("show");
+    }
+  }
+
+  // Overlay click always closes everything
+  document.addEventListener("DOMContentLoaded", () => {
+    const overlay = document.getElementById("overlay");
+    overlay.addEventListener("click", () => closeAll());
+
+    document.querySelector(".settings-btn:nth-child(1)")
+      .addEventListener("click", () => openModal("profileModal"));
+
+    document.querySelector(".settings-btn:nth-child(2)")
+      .addEventListener("click", () => openModal("accountModal"));
+
+    document.querySelector(".settings-btn:nth-child(3)")
+      .addEventListener("click", () => openModal("privacyModal"));
+  });
+</script>

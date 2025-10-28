@@ -1,0 +1,5 @@
+<div class="posts-grid">
+  <% @posts.each do |post| %>
+    <img src="<%= post.image_url %>" class="post-thumb" alt="Post">
+  <% end %>
+</div>

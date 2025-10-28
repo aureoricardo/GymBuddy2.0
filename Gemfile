@@ -17,6 +17,11 @@ gem "importmap-rails"
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "bootstrap", "~> 5.2"
 
+# Gemfile
+gem "image_processing", "~> 1.2"
+
+
+
 gem "turbo-rails"
 # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
 gem "stimulus-rails"
@@ -53,10 +58,14 @@ gem 'tailwindcss-rails'
 
 group :development do
   gem 'rack-livereload'
+gem 'guard'
+gem 'guard-livereload', require: false
 end
 
 
 gem 'view_component', '~> 2.0'
+
+
 
 
 

@@ -1,0 +1,285 @@
+<!-- Profile Header -->
+<div class="profile-header">
+  <img 
+    src="<%= avatar_url(@user) %>" 
+    class="profile-avatar" 
+    alt="Avatar"
+  />
+
+  <div class="profile-info">
+    <h2 class="username"><%= @user.username %></h2>
+    <p class="bio"><%= @user.bio %></p>
+
+
+<% if @user != current_user %>
+  <% follow = current_user.following_relationships.find_by(followed: @user) %>
+
+  <% if follow&.status == 'accepted' %>
+    <%= button_to "Following", follow_path(@user), method: :delete, class: "follow-btn following" %>
+  <% elsif follow&.status == 'pending' %>
+    <button class="follow-btn requested" disabled>Requested</button>
+  <% else %>
+    <%= button_to "Follow", follows_path(followed_id: @user.id), method: :post, class: "follow-btn" %>
+  <% end %>
+<% end %>
+
+
+    <!-- Follow Stats -->
+    <div class="follow-stats">
+      <div>
+        <strong><%= @user.posts.count rescue 0 %></strong>
+        <span>Posts</span>
+      </div>
+      <div>
+        <strong><%= @user.followers.count rescue 0 %></strong>
+        <span>Followers</span>
+      </div>
+      <div>
+        <strong><%= @user.following.count rescue 0 %></strong>
+        <span>Following</span>
+      </div>
+    </div>
+
+
+    <% if current_user.follows?(@user) || @user == current_user %>
+
+    <!-- Lifting Stats -->
+    <div class="lifting-stats">
+      <div class="stat-box">
+        <strong>Deadlift</strong>
+        <span><%= @user.deadlift || 0 %>kg</span>
+      </div>
+      <div class="stat-box">
+        <strong>Bench</strong>
+        <span><%= @user.bench || 0 %>kg</span>
+      </div>
+      <div class="stat-box">
+        <strong>Squat</strong>
+        <span><%= @user.squat || 0 %>kg</span>
+      </div>
+    </div>
+
+    <% end %>
+
+
+
+
+  </div>
+</div>
+
+
+<!-- Profile Navigation Tabs -->
+<div class="profile-tabs">
+  <a href="#posts" data-tab="posts" class="tab active">Posts</a>
+  <a href="#tagged" data-tab="tagged" class="tab">Tagged</a>
+  <a href="#saved" data-tab="saved" class="tab">Saved</a>
+</div>
+
+<!-- Profile Tab Content -->
+<div id="profile-tab-content" class="tab-content">
+<% if current_user.follows?(@user) || @user == current_user %>
+  <%= render "shared/user_posts", posts: @posts %>
+<% else %>
+  <div class="locked-posts">
+    🔒 <strong>Follow @<%= @user.username %></strong> to see their posts.
+  </div>
+<% end %>
+</div>
+
+
+
+<script>
+
+  document.addEventListener("DOMContentLoaded", () => {
+  const tabs = document.querySelectorAll(".profile-tabs .tab");
+  const content = document.getElementById("profile-tab-content");
+
+  tabs.forEach(tab => {
+    tab.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      // Update active tab
+      tabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+
+      // Fade out current content
+      content.classList.add("fade-out");
+
+      setTimeout(() => {
+        let tabName = tab.dataset.tab;
+
+        fetch(`/profile_tab?tab=${tabName}`)
+          .then(res => res.text())
+          .then(html => {
+            content.innerHTML = html;
+            content.classList.remove("fade-out");
+            content.classList.add("fade-in");
+            setTimeout(() => content.classList.remove("fade-in"), 300);
+          });
+      }, 200);
+    });
+  });
+});
+
+
+
+</script>
+
+<style>
+
+  .follow-btn.requested {
+  background: #ccc;
+  color: #666;
+  cursor: default;
+}
+
+
+  .follow-btn {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  background: #000;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.follow-btn.following {
+  background: #eee;
+  color: #333;
+}
+
+
+
+
+  
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 20px;
+  padding: 20px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #f0f0f0;
+}
+
+.profile-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.username {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0;
+  color: #222;
+}
+
+.bio {
+  font-size: 15px;
+  color: #555;
+  margin: 0;
+}
+
+.follow-stats {
+  display: flex;
+  justify-content: flex-start;
+  gap: 28px;
+}
+
+.follow-stats div {
+  text-align: center;
+}
+
+.follow-stats strong {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111;
+  display: block;
+}
+
+.follow-stats span {
+  font-size: 13px;
+  color: #666;
+}
+
+.lifting-stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.stat-box {
+  flex: 1;
+  background: #fafafa;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+  border: 1px solid #eee;
+}
+
+.stat-box strong {
+  display: block;
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 4px;
+}
+
+.stat-box span {
+  font-size: 16px;
+  font-weight: bold;
+  color: #111;
+}
+
+.profile-tabs {
+  
+  display: flex;
+  justify-content: space-around;
+  background: #fff;
+}
+
+.tab {
+  
+  flex: 1;
+  text-align: center;
+  padding: 12px 0;
+  font-size: 14px;
+  color: #666;
+  text-decoration: none;
+  transition: all 0.3s ease; /* smooth transition */
+  cursor: pointer;
+}
+
+.tab:hover {
+  background-color: #f9f9f9;
+}
+
+.tab.active {
+  font-weight: bold;
+  color: #000;
+  border-bottom: 3px solid #000;
+}
+
+/* Only tab content fade */
+.tab-content {
+  transition: opacity 0.3s ease;
+  
+}
+.fade-out {
+  opacity: 0;
+}
+.fade-in {
+  opacity: 1;
+}
+</style>

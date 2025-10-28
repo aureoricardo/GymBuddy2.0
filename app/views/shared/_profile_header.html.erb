@@ -1,0 +1,136 @@
+<!-- Profile Header -->
+<div class="profile-header">
+  <img 
+    src="<%= avatar_url(current_user) %>" 
+    class="profile-avatar" 
+    alt="Avatar"
+  />
+
+  <div class="profile-info">
+    <h2 class="username"><%= current_user.username %></h2>
+    <p class="bio"><%= current_user.bio %></p>
+
+    <!-- Follow Stats -->
+    <div class="follow-stats">
+      <div>
+        <strong><%= current_user.posts.count rescue 0 %></strong>
+        <span>Posts</span>
+      </div>
+      <div>
+        <strong><%= current_user.followers.count rescue 0 %></strong>
+        <span>Followers</span>
+      </div>
+      <div>
+        <strong><%= current_user.following.count rescue 0 %></strong>
+        <span>Following</span>
+      </div>
+    </div>
+
+    <!-- Lifting Stats -->
+    <div class="lifting-stats">
+      <div class="stat-box">
+        <strong>Deadlift</strong>
+        <span><%= current_user.deadlift || 0 %>kg</span>
+      </div>
+      <div class="stat-box">
+        <strong>Bench</strong>
+        <span><%= current_user.bench || 0 %>kg</span>
+      </div>
+      <div class="stat-box">
+        <strong>Squat</strong>
+        <span><%= current_user.squat || 0 %>kg</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<style>
+.profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 20px;
+  padding: 20px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #f0f0f0;
+}
+
+.profile-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.username {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0;
+  color: #222;
+}
+
+.bio {
+  font-size: 15px;
+  color: #555;
+  margin: 0;
+}
+
+.follow-stats {
+  display: flex;
+  justify-content: flex-start;
+  gap: 28px;
+}
+
+.follow-stats div {
+  text-align: center;
+}
+
+.follow-stats strong {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111;
+  display: block;
+}
+
+.follow-stats span {
+  font-size: 13px;
+  color: #666;
+}
+
+.lifting-stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.stat-box {
+  flex: 1;
+  background: #fafafa;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+  border: 1px solid #eee;
+}
+
+.stat-box strong {
+  display: block;
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 4px;
+}
+
+.stat-box span {
+  font-size: 16px;
+  font-weight: bold;
+  color: #111;
+}
+</style>

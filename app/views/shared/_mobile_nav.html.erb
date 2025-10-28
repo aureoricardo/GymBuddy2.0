@@ -1,84 +1,148 @@
-<footer class="footer">
+<footer class="footer <%= 'transparent' if current_page?(workouts_path) %>">
   <nav class="footer-nav">
-    <%= link_to root_path, class: (current_page?(root_path) ? 'active' : '') + ' footer-link' do %>
+    <%= link_to "/home", class: "footer-link #{'active' if current_page?('/home')}" do %>
       <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path d="M3 9.75L12 3l9 6.75v10.5a1.5 1.5 0 01-1.5 1.5H4.5A1.5 1.5 0 013 20.25V9.75z" />
       </svg>
       <span class="label">Feed</span>
     <% end %>
 
-    <%= link_to "/messages", class: (current_page?('/messages') ? 'active' : '') + ' footer-link' do %>
-      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h12a2 2 0 012 2z" />
-      </svg>
-      <span class="label">Messages</span>
-    <% end %>
-
-    <%= link_to "/workouts", class: (current_page?('/workouts') ? 'active' : '') + ' footer-link' do %>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-        <path d="M96 64c0-17.7 14.3-32 32-32l32 0c17.7 0 32 14.3 32 32l0 160 0 64 0 160c0 17.7-14.3 32-32 32l-32 0c-17.7 0-32-14.3-32-32l0-64-32 0c-17.7 0-32-14.3-32-32l0-64c-17.7 0-32-14.3-32-32s14.3-32 32-32l0-64c0-17.7 14.3-32 32-32l32 0 0-64zm448 0l0 64 32 0c17.7 0 32 14.3 32 32l0 64c17.7 0 32 14.3 32 32s-14.3 32-32 32l0 64c0 17.7-14.3 32-32 32l-32 0 0 64c0 17.7-14.3 32-32 32l-32 0c-17.7 0-32-14.3-32-32l0-160 0-64 0-160c0-17.7 14.3-32 32-32l32 0c17.7 0 32 14.3 32 32zM416 224l0 64-192 0 0-64 192 0z"/>
-      </svg>
-      <span class="label">Workouts</span>
-    <% end %>
-
-    <%= link_to "/notifications", class: (current_page?('/notifications') ? 'active' : '') + ' footer-link' do %>
+    <%= link_to "/notifications", class: "footer-link #{'active' if current_page?('/notifications')}" do %>
       <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4s-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
       </svg>
       <span class="label">Notifications</span>
     <% end %>
 
-    <%= link_to "/settings", class: (current_page?('/settings') ? 'active' : '') + ' footer-link' do %>
-
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-
-        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
-
+    <%= link_to "/workouts", class: "footer-link #{'active' if current_page?('/workouts')}" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
+        <path d="M96 64c0-17.7 14.3-32 32-32l32 0c17.7 0 32 14.3 32 32l0 160 0 64 0 160c0 17.7-14.3 32-32 32l-32 0c-17.7 0-32-14.3-32-32l0-64-32 0c-17.7 0-32-14.3-32-32l0-64c-17.7 0-32-14.3-32-32s14.3-32 32-32l0-64c0-17.7 14.3-32 32-32l32 0 0-64zm448 0l0 64 32 0c17.7 0 32 14.3 32 32l0 64c17.7 0 32 14.3 32 32s-14.3 32-32 32l0 64c0 17.7-14.3 32-32 32l-32 0 0 64c0 17.7-14.3 32-32 32l-32 0c-17.7 0-32-14.3-32-32l0-160 0-64 0-160c0-17.7 14.3-32 32-32l32 0c17.7 0 32 14.3 32 32zM416 224l0 64-192 0 0-64 192 0z"/>
       </svg>
+      <span class="label">Workouts</span>
+    <% end %>
 
-      <span class="label">Menu</span>
+    <%= link_to "/map", class: "footer-link #{'active' if current_page?('/map')}" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+      </svg>
+      <span class="label">Location</span>
+    <% end %>
+
+    <%= link_to "/messages", class: "footer-link #{'active' if current_page?('/messages')}" do %>
+      <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h12a2 2 0 012 2z" />
+      </svg>
+      <span class="label">Messages</span>
+    <% end %>
+
+    <%= link_to "/profile", class: "footer-link #{'active' if current_page?('/profile')}" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
+      </svg>
+      <span class="label">Profile</span>
     <% end %>
   </nav>
 
-  <style>
+<style>
+  /* Footer base */
+  .footer {
+    position: fixed;
+    margin-top: 10px;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 95%;
+    max-width: 480px;
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 6px 0;
+    font-family: 'Inter', system-ui, sans-serif; /* consistent font */
+    font-weight: 500; /* consistent weight */
+  }
+
+  .footer-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    
+  }
+
+  .footer-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #4a4a4a;
+    font-size: 12px;
+    letter-spacing: 0.5px; /* consistent spacing */
+    transition: color 0.3s ease, transform 0.2s ease;
+    padding: 6px 8px;
+    border-radius: 12px;
+    font-family: inherit; /* inherits from footer */
+    font-weight: 500; /* consistent weight */
+  }
+
+  .footer-link:hover {
+    background-color: rgba(37, 99, 235, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .footer-link.active {
+    color: #2563eb;
+    background-color: rgba(37, 99, 235, 0.15);
+  }
+
+  .icon {
+    width: 26px;
+    height: 26px;
+    margin-bottom: 4px;
+    stroke-width: 1.5;
+  }
+
+  .label {
+    font-size: 10px;
+    font-family: inherit; /* consistent */
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  /* Transparent style for workouts page */
+  .footer.transparent {
+    background-color: rgba(0, 217, 255, 0.15);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    backdrop-filter: blur(6px);
+    color: white;
+  }
+
+  .footer.transparent .footer-link {
+    color: white;
+  }
+
+  .footer.transparent .footer-link.active {
+    color: #60a5fa;
+    background-color: rgba(96, 165, 250, 0.25);
+  }
+
+  .footer.transparent .icon {
+    stroke: currentColor;
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 480px) {
     .footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background-color: white;
-      border-top: 1px solid #ddd;
-      z-index: 9999;
-      box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
-    }
-    .footer-nav {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
       padding: 8px 0;
-      margin: 0;
-    }
-    .footer-link {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-decoration: none;
-      color: #4a4a4a;
-      font-size: 12px;
-      font-weight: normal;
-    }
-    .footer-link.active {
-      color: #2563eb; /* blue */
-      font-weight: bold;
     }
     .icon {
-      width: 24px;
-      height: 24px;
-      margin-bottom: 4px;
-      stroke-width: 1.5;
+      width: 28px;
+      height: 28px;
     }
     .label {
-      font-size: 10px;
+      font-size: 11px;
     }
-  </style>
+  }
+</style>
+
+
 </footer>

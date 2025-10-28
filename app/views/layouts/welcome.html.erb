@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GymBuddy - Welcome</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+</head>
+<body class="bg-gradient-to-b from-blue-500 to-purple-600 min-h-screen flex items-center justify-center">
+  <%= yield %>
+</body>
+</html>

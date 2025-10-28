@@ -9,19 +9,3 @@
 #   end
 
 
-User.destroy_all
-
-User.create!(
-  username: "alice",
-  avatar_url: "https://i.pravatar.cc/150?img=1"
-)
-
-User.create!(
-  username: "bob",
-  avatar_url: "https://i.pravatar.cc/150?img=2"
-)
-
-User.create!(
-  username: "carla",
-  avatar_url: "https://i.pravatar.cc/150?img=3"
-)

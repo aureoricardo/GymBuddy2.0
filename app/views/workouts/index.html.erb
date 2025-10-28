@@ -1,0 +1,124 @@
+<div class="reels-container">
+  <% @posts.each do |post| %>
+    <div class="reel">
+      <video class="reel-video" src="<%= url_for(post.image) %>" playsinline muted autoplay loop></video>
+      <div class="overlay">
+        <div class="info">
+          <div class="username">@<%= post.user.username %></div>
+          <div class="description"><%= post.caption %></div>
+        </div>
+        <div class="actions">
+          <button class="btn">❤️</button>
+          <button class="btn">💬</button>
+          <button class="btn">📤</button>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<style>
+  html, body {
+    margin: 0; padding: 0;
+    height: 100%;
+    background: black;
+    overflow: hidden;
+    font-family: sans-serif;
+  }
+
+.reels-container {
+   height: 100vh; 
+   overflow-y: scroll; 
+   scroll-snap-type: y mandatory; /* Hide scrollbar */ 
+   scrollbar-width: none; 
+   -ms-overflow-style: none; /* Smooth scrolling & momentum */ 
+   scroll-behavior: smooth; /* smooth animation */ 
+   -webkit-overflow-scrolling: touch; /* momentum on iOS */ 
+  } 
+
+.reel-container::-webkit-scrollbar { display: none; }
+  .reel {
+    position: relative;
+    height: 100vh;
+    scroll-snap-align: start;
+    overflow: hidden;
+  }
+
+  .reel-video {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: translate(-50%, -50%);
+  }
+
+  .overlay {
+    position: absolute;
+    top: 53%; 
+    bottom: 0; left: 0; right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* center vertically */
+    padding: 20px;
+    pointer-events: none;
+    color: white;
+    z-index: 10;
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    pointer-events: auto;
+    max-width: 60%;
+    text-shadow: 0 0 6px rgba(0,0,0,0.7);
+    margin-top: 150px
+  }
+
+  .username {
+    font-weight: bold;
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+  }
+
+  .description {
+    font-size: 1.1rem;
+  }
+
+  .actions {
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .btn {
+    background: rgba(0,0,0,0.6);
+    border: none;
+    border-radius: 50%;
+    padding: 10px;
+    font-size: 1.7rem;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  .btn:hover {
+    transform: scale(1.2);
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const videos = document.querySelectorAll(".reel-video");
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.play();
+        else entry.target.pause();
+      });
+    }, { threshold: 0.75 });
+
+    videos.forEach(video => observer.observe(video));
+  });
+</script>
