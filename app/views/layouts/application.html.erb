@@ -1,23 +1,52 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title><%= content_for(:title) || "Gym Buddy2 0" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GymBuddy</title>
 
-    <%= yield :head %>
+     <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= javascript_importmap_tags %>
 
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
+    <!-- Stylesheets -->
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %>
+
+    <!-- External CSS / JS -->
+    <link href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
   </head>
 
-  <body>
-    <%= yield %>
-  </body>
+<body class="<%= 'workouts-page' if current_page?(workouts_path) %> bg-gray-100 text-gray-900 pb-16">
+<!-- Header (hidden on messages pages except index, and hidden on maps#index) -->
+<% if !(controller_name == 'messages' && action_name != 'index') && !(controller_name == 'map' && action_name == 'index') %>
+  <%= render 'shared/header' %>
+<% end %>
+
+
+  
+
+  <!-- Main content wrapped in Turbo Frame -->
+  <main>
+    <turbo-frame id="main_content">
+      <%= yield %>
+    </turbo-frame>
+  </main>   
+
+  <!-- Settings Menu (you can also hide it similarly if needed) -->
+  <%= render 'shared/settings_drawer' %>
+
+  <!-- Fixed Mobile Navigation Footer (hidden on messages pages except index) -->
+  <% if !(controller_name == 'messages' && action_name != 'index') %>
+    <div class="fixed bottom-0 left-0 w-full z-50">
+      <%= render 'shared/mobile_nav' %>
+    </div>
+  <% end %>
+
+  <!-- JS -->
+  <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+</body>
+
 </html>
+

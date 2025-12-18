@@ -1,0 +1,43 @@
+<h2>Follow Requests</h2>
+
+<% if @requests.any? %>
+  <% @requests.each do |follow| %>
+    <div class="follow-request">
+      <strong><%= follow.follower.username %></strong>
+      <%= button_to "Accept", follow_request_path(follow), method: :patch, class: "accept-btn" %>
+      <%= button_to "Reject", follow_request_path(follow), method: :delete, class: "reject-btn" %>
+    </div>
+  <% end %>
+<% else %>
+  <p>No pending follow requests.</p>
+<% end %>
+
+<style>
+
+
+
+.follow-request {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.accept-btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.reject-btn {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+
+</style>

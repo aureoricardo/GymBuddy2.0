@@ -1,9 +1,0 @@
-<h1>All gyms</h1>
-
-<ul>
-<%= @gyms.each do |gym| %>
- <li><%= link_to gym.name, gym_path(gym) %></li>
-<% end %>
-</ul>
-
-<%= link_to 'create new one', gyms_new_path %>

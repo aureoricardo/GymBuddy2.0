@@ -1,0 +1,518 @@
+<div class="feed-container">
+  <% @posts.each do |post| %>
+    <div class="post-card" id="post-<%= post.id %>">
+      <!-- Post Header -->
+      <div class="post-header">
+        <%= image_tag(avatar_url(post.user), class: "avatar") %>
+        <div class="user-info">
+          <h2 class="username"><%= post.user.username %></h2>
+          <span class="time"><%= time_ago_in_words(post.created_at) %> ago</span>
+        </div>
+
+        <div class="post-options">
+          <% if post.user == current_user %>
+            <button class="open-options">⋮</button>
+            <div class="options-menu hidden">
+              <%= button_to "🗑 Delete Post", post_path(post), method: :delete, 
+                  data: { confirm: "Are you sure you want to delete this post?" }, 
+                  class: "delete-option" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Post Content -->
+      <div class="post-content">
+        <p class="post-text"><%= post.content %></p>
+
+        <% if post.image.attached? %>
+          <% if post.image.content_type.start_with?('image') %>
+            <img src="<%= url_for(post.image) %>" alt="Post Image" class="post-image">
+          <% elsif post.image.content_type.start_with?('video') %>
+            <video class="post-image" controls preload="metadata">
+              <source src="<%= url_for(post.image) %>" type="<%= post.image.content_type %>">
+              Your browser does not support the video tag.
+            </video>
+          <% end %>
+        <% end %>
+      </div>
+
+<div class="post-actions">
+
+
+<% liked = current_user.likes.exists?(post_id: post.id) rescue false %>
+
+<div class="like-container" data-post-id="<%= post.id %>"> 
+  <span class="like-count"><%= post.likes.count || 0 %></span>
+  <button 
+    class="action-btn like-btn <%= 'liked' if liked %>" 
+    data-liked="<%= liked %>">
+    ❤️
+  </button>
+</div>
+
+  <button class="action-btn comment-btn" data-post-id="<%= post.id %>">💬</button>
+  <button class="action-btn share-btn" data-post-id="<%= post.id %>">🔗</button>
+
+  <% if current_user.saved_posts.include?(post) %>
+    <button class="action-btn save-btn" data-post-id="<%= post.id %>" data-saved="true">💾 Saved</button>
+  <% else %>
+    <button class="action-btn save-btn" data-post-id="<%= post.id %>" data-saved="false">💾 Save</button>
+  <% end %>
+</div>
+
+  <%= render "shared/comments", post: post %>
+
+    </div>
+  <% end %>
+</div>
+
+
+
+
+
+
+<script>
+
+
+  // --- SHARE BUTTON ---
+document.querySelectorAll(".action-btn.share-btn").forEach(button => {
+  button.addEventListener("click", () => {
+    const postId = button.closest(".post-card").id.split("-")[1];
+    const shareUrl = `${window.location.origin}/posts/${postId}`;
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      alert("Link copied! Share it with your friends.");
+    });
+  });
+});
+
+
+
+document.querySelectorAll(".like-btn").forEach(button => {
+  button.addEventListener("click", () => {
+    const postCard = button.closest(".post-card");
+    const postId = postCard.id.split("-")[1];
+
+    fetch(`/posts/${postId}/toggle_like`, {
+      method: "POST",
+      headers: {
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content,
+        "Accept": "application/json"
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      button.dataset.liked = data.liked;
+      button.classList.toggle("liked", data.liked);
+
+      // Update the like count inside the same container
+      const likeContainer = button.closest(".like-container");
+      if (likeContainer) {
+        const countSpan = likeContainer.querySelector(".like-count");
+        if (countSpan) countSpan.textContent = data.count;
+      }
+    });
+  });
+});
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
+
+
+   // DELETE POST
+  document.querySelectorAll(".delete-option").forEach(form => {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const url = form.action;
+      const postCard = form.closest(".post-card");
+
+      fetch(url, {
+        method: "DELETE",
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content,
+          "Accept": "application/json"
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          postCard.style.transition = "opacity 0.4s";
+          postCard.style.opacity = "0";
+          setTimeout(() => postCard.remove(), 400);
+        } else {
+          alert(data.error || "Failed to delete post.");
+          
+
+      }
+      });
+      });
+       });
+  
+
+
+
+
+  // --- SAVE / UNSAVE ---
+  document.querySelectorAll(".save-btn").forEach(button => {
+    button.addEventListener("click", () => {
+      const postId = button.dataset.postId;
+      const isSaved = button.dataset.saved === "true";
+      const url = isSaved ? `/posts/${postId}/unsave` : `/posts/${postId}/save`;
+      const method = isSaved ? "DELETE" : "POST";
+
+      fetch(url, {
+        method: method,
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content,
+          "Accept": "application/json"
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          button.dataset.saved = (!isSaved).toString();
+          button.textContent = !isSaved ? "💾 Saved" : "💾 Save";
+
+          const msg = !isSaved ? "Post saved!" : "Post unsaved!";
+          const toast = document.createElement("div");
+          toast.textContent = msg;
+          toast.style.position = "fixed";
+          toast.style.top = "50%";
+          toast.style.left = "50%";
+          toast.style.transform = "translate(-50%, -50%)";
+          toast.style.background = "#111";
+          toast.style.color = "#fff";
+          toast.style.padding = "12px 24px";
+          toast.style.borderRadius = "12px";
+          toast.style.zIndex = "9999";
+          toast.style.opacity = "0.95";
+          toast.style.fontWeight = "bold";
+          toast.style.fontSize = "14px";
+          document.body.appendChild(toast);
+          setTimeout(() => toast.remove(), 1500);
+        }
+      });
+    });
+  });
+
+  // --- OPTIONS DROPDOWN ---
+  document.querySelectorAll(".open-options").forEach(button => {
+    button.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const menu = button.nextElementSibling;
+      menu.classList.toggle("hidden");
+
+      // Close other open menus
+      document.querySelectorAll(".options-menu").forEach(m => {
+        if (m !== menu) m.classList.add("hidden");
+      });
+    });
+  });
+
+  // Close menu when clicking outside
+  document.addEventListener("click", () => {
+    document.querySelectorAll(".options-menu").forEach(menu => menu.classList.add("hidden"));
+  });
+});
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  // OPEN COMMENTS MODAL
+  document.querySelectorAll(".comment-btn").forEach(button => {
+    button.addEventListener("click", () => {
+      const postId = button.dataset.postId;
+      const modal = document.getElementById(`commentsModal-${postId}`);
+      if (modal) {
+        modal.classList.remove("hidden");
+        modal.style.display = "flex";
+      }
+    });
+  });
+
+  // CLOSE COMMENTS MODAL
+  document.querySelectorAll(".close-comments").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const postId = btn.dataset.postId;
+      const modal = document.getElementById(`commentsModal-${postId}`);
+      if (modal) {
+        modal.classList.add("hidden");
+        modal.style.display = "none";
+      }
+    });
+  });
+
+  // SUBMIT NEW COMMENT
+  document.querySelectorAll(".new-comment-form").forEach(form => {
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const postId = form.dataset.postId;
+      const textarea = form.querySelector("textarea");
+      const body = textarea.value.trim();
+      if (!body) return;
+
+      fetch(`/posts/${postId}/comments`, {
+        method: "POST",
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content,
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+body: JSON.stringify({  body  })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          const list = document.getElementById(`comments-list-${postId}`);
+          const commentDiv = document.createElement("div");
+          commentDiv.classList.add("comment");
+          commentDiv.innerHTML = `<strong>@${data.comment.username}:</strong> <span>${data.comment.body}</span>`;
+          list.appendChild(commentDiv);
+          textarea.value = "";
+          const noComments = list.querySelector(".no-comments");
+          if (noComments) noComments.remove();
+        }
+      });
+    });
+  });
+
+});
+
+</script>
+<style>
+
+
+  
+
+  .like-btn.liked {
+  color: #e11d48;
+  transform: scale(1.2);
+  transition: transform 0.1s ease;
+}
+.like-count {
+  font-weight: bold;
+  margin-left: 6px;
+  color: black;
+}
+.like-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+
+
+
+  .post-options {
+  position: relative;
+}
+
+.open-options {
+  margin-left: 220px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #555;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.open-options:hover {
+  background: #f1f1f1;
+}
+
+.options-menu {
+  position: absolute;
+  top: 25px;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  padding: 6px 0;
+  min-width: 130px;
+  z-index: 100;
+}
+
+.options-menu.hidden {
+  display: none;
+}
+
+.options-menu form {
+  margin: 0;
+}
+
+.delete-option {
+  background: none;
+  border: none;
+  color: #e11d48;
+  font-size: 14px;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.delete-option:hover {
+  background: #fee2e2;
+}
+
+.feed-container {
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  padding-bottom: 60px; 
+  margin-top: 20px;
+
+  /* Hide scrollbar */
+  scrollbar-width: none;      
+  -ms-overflow-style: none;   
+
+  /* Smooth scrolling & momentum */
+  scroll-behavior: smooth;      /* smooth animation */
+  -webkit-overflow-scrolling: touch; /* momentum on iOS */
+}
+
+.feed-container::-webkit-scrollbar {
+  display: none;
+}
+
+
+
+.post-card {
+  height: 70vh;              /* each post fills the screen */
+  scroll-snap-align: start;   /* snap each post */
+  margin: 0;                  /* remove extra spacing */
+  border-radius: 0;           /* optional: remove round corners if fullscreen */
+  max-width: 100%; 
+  max-height: 100%;           /* make it full width */
+  box-shadow: none;           /* remove card shadow if you want flat look */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+
+
+
+
+
+
+  .tagged-users {
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: #555;
+}
+
+.tagged-username {
+  font-weight: bold;
+  margin-right: 4px;
+}
+
+.save-btn {
+  color: #007bff;
+}
+
+.save-btn:hover {
+  color: #0056b3;
+}
+
+
+
+.post-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin: 12px auto;
+  max-width: 550px;
+  overflow: hidden;
+  font-family: system-ui, sans-serif;
+  padding: 30px;
+  margin-bottom: 100px;
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  gap: 12px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  
+  
+}
+
+.username {
+  font-weight: bold;
+  font-size: 18px;
+  color: black;
+  
+}
+
+.time {
+  font-size: 12px;
+  color: #888;
+}
+
+.post-content video.post-image {
+  width: 100%;
+  max-height: 400px;
+  height: auto;
+  object-fit: contain;
+  border-radius: 12px;
+  margin-top: 8px;
+}
+
+.post-text {
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.post-image {
+  width: 200%;
+  max-height: 200px;      /* limit the height */
+  height: auto;           /* preserve aspect ratio */
+  object-fit: contain;    /* fit inside container without cropping */
+  border-radius: 12px;
+  margin-top: 8px;
+}
+
+.post-actions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 0;
+  border-top: 1px solid #eee;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.action-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+  .post-card { margin: 8px; }
+  .post-image { max-height: 300px; }
+}
+</style>

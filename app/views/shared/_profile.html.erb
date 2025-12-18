@@ -1,0 +1,97 @@
+<!-- Profile Header -->
+<%= render "shared/profile_header" %>
+
+
+<!-- Profile Navigation Tabs -->
+<div class="profile-tabs">
+  <a href="#posts" data-tab="posts" class="tab active">Posts</a>
+  <a href="#tagged" data-tab="tagged" class="tab">Tagged</a>
+  <a href="#saved" data-tab="saved" class="tab">Saved</a>
+</div>
+
+<!-- Profile Tab Content -->
+<div id="profile-tab-content" class="tab-content">
+  <%= render "shared/profile_posts", posts: @posts %>
+</div>
+
+
+
+<script>
+
+  document.addEventListener("DOMContentLoaded", () => {
+  const tabs = document.querySelectorAll(".profile-tabs .tab");
+  const content = document.getElementById("profile-tab-content");
+
+  tabs.forEach(tab => {
+    tab.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      // Update active tab
+      tabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+
+      // Fade out current content
+      content.classList.add("fade-out");
+
+      setTimeout(() => {
+        let tabName = tab.dataset.tab;
+
+        fetch(`/profile_tab?tab=${tabName}`)
+          .then(res => res.text())
+          .then(html => {
+            content.innerHTML = html;
+            content.classList.remove("fade-out");
+            content.classList.add("fade-in");
+            setTimeout(() => content.classList.remove("fade-in"), 300);
+          });
+      }, 200);
+    });
+  });
+});
+
+
+
+</script>
+
+<style>
+.profile-tabs {
+  
+  display: flex;
+  justify-content: space-around;
+  background: #fff;
+}
+
+.tab {
+  
+  flex: 1;
+  text-align: center;
+  padding: 12px 0;
+  font-size: 14px;
+  color: #666;
+  text-decoration: none;
+  transition: all 0.3s ease; /* smooth transition */
+  cursor: pointer;
+}
+
+.tab:hover {
+  background-color: #f9f9f9;
+}
+
+.tab.active {
+  font-weight: bold;
+  color: #000;
+  border-bottom: 3px solid #000;
+}
+
+/* Only tab content fade */
+.tab-content {
+  transition: opacity 0.3s ease;
+  
+}
+.fade-out {
+  opacity: 0;
+}
+.fade-in {
+  opacity: 1;
+}
+</style>

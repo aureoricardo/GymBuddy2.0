@@ -1,0 +1,69 @@
+<!-- app/views/posts/show.html.erb -->
+<div id="post-modal" class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 hidden">
+  <div class="modal-content bg-white rounded-xl shadow-lg w-full max-w-xl relative overflow-y-auto max-h-[90vh]">
+    
+    <!-- Close button -->
+    <button id="close-modal" class="absolute top-4 right-4 text-gray-700 text-2xl font-bold">&times;</button>
+
+    <!-- Post Content -->
+    <div class="feed-container">
+      <div class="post-card" id="post-<%= @post.id %>">
+        <!-- Post Header -->
+        <div class="post-header">
+          <%= image_tag(avatar_url(@post.user), class: "avatar") %>
+          <div class="user-info">
+            <h2 class="username"><%= @post.user.username %></h2>
+            <span class="time"><%= time_ago_in_words(@post.created_at) %> ago</span>
+          </div>
+
+          <div class="post-options">
+            <% if @post.user == current_user %>
+              <button class="open-options">⋮</button>
+              <div class="options-menu hidden">
+                <%= button_to "🗑 Delete Post", post_path(@post), method: :delete, 
+                    data: { confirm: "Are you sure you want to delete this post?" }, 
+                    class: "delete-option" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Post Content -->
+        <div class="post-content">
+          <p class="post-text"><%= @post.content %></p>
+
+          <% if @post.image.attached? %>
+            <% if @post.image.content_type.start_with?('image') %>
+              <img src="<%= url_for(@post.image) %>" alt="Post Image" class="post-image">
+            <% elsif @post.image.content_type.start_with?('video') %>
+              <video class="post-image" controls preload="metadata">
+                <source src="<%= url_for(@post.image) %>" type="<%= @post.image.content_type %>">
+                Your browser does not support the video tag.
+              </video>
+            <% end %>
+          <% end %>
+        </div>
+
+        <div class="post-actions">
+          <% liked = current_user.likes.exists?(post_id: @post.id) rescue false %>
+          <div class="like-container" data-post-id="<%= @post.id %>"> 
+            <span class="like-count"><%= @post.likes.count || 0 %></span>
+            <button class="action-btn like-btn <%= 'liked' if liked %>" data-liked="<%= liked %>">❤️</button>
+          </div>
+
+          <button class="action-btn comment-btn" data-post-id="<%= @post.id %>">💬</button>
+          <button class="action-btn share-btn" data-post-id="<%= @post.id %>">🔗</button>
+
+          <% if current_user.saved_posts.include?(@post) %>
+            <button class="action-btn save-btn" data-post-id="<%= @post.id %>" data-saved="true">💾 Saved</button>
+          <% else %>
+            <button class="action-btn save-btn" data-post-id="<%= @post.id %>" data-saved="false">💾 Save</button>
+          <% end %>
+        </div>
+
+        <%= render "shared/comments", post: @post %>
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,134 @@
+<div class="apa" id="map" style="height: 100vh;">
+
+  
+</div>
+
+<link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet" />
+<script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+<style>
+.apa {
+  width: 100%;
+}
+
+</style>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const map = new maplibregl.Map({
+    container: 'map',
+    style: 'https://api.maptiler.com/maps/0197dc4f-0ce4-70c9-a239-09a2d13b45ac/style.json?key=<%= @maptiler_key %>',
+    center: [-9.1399, 38.7169],
+    zoom: 13
+  });
+
+  map.addControl(new maplibregl.NavigationControl());
+
+  // --- Determine Open/Closed based on gym local time ---
+  function isGymOpen(opening_hours, gmtOffsetSeconds) {
+    if (!opening_hours) return "Unknown";
+
+    const nowUtc = new Date();
+    const gymTime = new Date(nowUtc.getTime() + gmtOffsetSeconds * 1000);
+    const weekday = gymTime.getDay(); // 0=Sun ... 6=Sat
+    const timeMinutes = gymTime.getHours() * 60 + gymTime.getMinutes();
+
+    const daysMap = { "Mo":1, "Tu":2, "We":3, "Th":4, "Fr":5, "Sa":6, "Su":0 };
+    const rules = opening_hours.split(";").map(r => r.trim());
+
+    for (const rule of rules) {
+      const [dayPart, hourPart] = rule.split(" ", 2);
+      if (!hourPart || hourPart.toLowerCase() === "off") {
+        if (dayPart.split(",").some(d => daysMap[d] === weekday)) return "Closed";
+        continue;
+      }
+
+      const applicable = dayPart.split(",").some(d => {
+        if (d.includes("-")) {
+          const [start, end] = d.split("-");
+          return weekday >= daysMap[start] && weekday <= daysMap[end];
+        } else {
+          return daysMap[d] === weekday;
+        }
+      });
+
+      if (applicable) {
+        const [start, end] = hourPart.split("-").map(t => t.split(":"));
+        const startMinutes = parseInt(start[0]) * 60 + parseInt(start[1]);
+        const endMinutes = parseInt(end[0]) * 60 + parseInt(end[1]);
+        if (timeMinutes >= startMinutes && timeMinutes <= endMinutes) return "Open";
+        return "Closed";
+      }
+    }
+
+    return "Closed";
+  }
+
+  // --- USER LOCATION MARKER ---
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(position => {
+      const userLng = position.coords.longitude;
+      const userLat = position.coords.latitude;
+
+      const elUser = document.createElement('div');
+      elUser.style.width = '50px';
+      elUser.style.height = '50px';
+      elUser.style.borderRadius = '50%';
+      elUser.style.border = '2px solid white';
+      elUser.style.boxShadow = '0 0 5px rgba(0,0,0,0.3)';
+      elUser.style.overflow = 'hidden';
+      elUser.style.cursor = 'pointer';
+
+      const imgUser = document.createElement('img');
+      imgUser.src = "<%= avatar_url(@user) %>";
+      imgUser.style.width = '100%';
+      imgUser.style.height = '100%';
+      imgUser.style.objectFit = 'cover';
+      elUser.appendChild(imgUser);
+
+      new maplibregl.Marker(elUser)
+        .setLngLat([userLng, userLat])
+        .setPopup(new maplibregl.Popup({ offset: 25 }).setText("Your location"))
+        .addTo(map);
+
+      map.flyTo({ center: [userLng, userLat], zoom: 13 });
+
+      // --- FETCH NEARBY GYMS ---
+      fetch(`/map/nearby_gyms?lat=${userLat}&lng=${userLng}`)
+        .then(res => res.json())
+        .then(gyms => {
+          gyms.forEach(gym => {
+            const elGym = document.createElement('div');
+            elGym.style.width = '40px';
+            elGym.style.height = '40px';
+            elGym.style.borderRadius = '8px';
+            elGym.style.overflow = 'hidden';
+            elGym.style.cursor = 'pointer';
+            elGym.style.boxShadow = '0 0 3px rgba(0,0,0,0.3)';
+
+            const imgGym = document.createElement('img');
+            imgGym.src = gym.avatar_url || "/images/gym-placeholder.png";
+            imgGym.style.width = '100%';
+            imgGym.style.height = '100%';
+            imgGym.style.objectFit = 'cover';
+            elGym.appendChild(imgGym);
+
+            const status = isGymOpen(gym.opening_hours, gym.gmt_offset);
+            const popupContent = `
+              <strong>${gym.name}</strong><br>
+              <em>Status:</em> ${status}<br>
+              <em>Opening Hours:</em> ${gym.opening_hours || "Not available"}
+            `;
+
+            new maplibregl.Marker(elGym)
+              .setLngLat([gym.longitude, gym.latitude])
+              .setPopup(new maplibregl.Popup({ offset: 25 }).setHTML(popupContent))
+              .addTo(map);
+          });
+        })
+        .catch(err => console.error("Failed to load nearby gyms:", err));
+
+    }, error => {
+      console.warn("Geolocation denied or failed:", error);
+    });
+  }
+});
+</script>

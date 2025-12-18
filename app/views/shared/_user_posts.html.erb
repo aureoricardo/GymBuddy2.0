@@ -1,0 +1,38 @@
+<div class="posts-grid">
+  <% @user.posts.order(created_at: :desc).each do |post| %>
+    <% if post.image.attached? %>
+      <% if post.image.content_type.start_with?('image') %>
+        <img src="<%= url_for(post.image) %>" class="post-thumb" alt="Post image">
+      <% elsif post.image.content_type.start_with?('video') %>
+        <video class="post-thumb" controls preload="metadata">
+          <source src="<%= url_for(post.image) %>" type="<%= post.image.content_type %>">
+          Your browser does not support the video tag.
+        </video>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
+
+
+
+
+<style>
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  margin-top: 0px;
+  overflow: hidden;
+}
+
+.post-thumb {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+.post-thumb:hover {
+  transform: scale(1.05);
+}
+</style>

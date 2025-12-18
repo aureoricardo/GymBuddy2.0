@@ -1,0 +1,103 @@
+<div class="messages-page">  
+  
+  
+  <!-- Start new conversation -->
+  <div class="start-convo">
+    <h3>Start a new chat</h3>
+    <% if current_user.following.any? %>
+      <% current_user.following.each do |followed_user| %>
+        <%= link_to message_path(followed_user.id), class: "new-chat-btn" do %>
+          💬 <%= followed_user.username %>
+        <% end %>
+      <% end %>
+    <% else %>
+      <p class="no-following">You’re not following anyone yet.</p>
+    <% end %>
+  </div>
+  <h1>CHAT</h1>
+
+  <% if @conversations.any? %>
+    <% @conversations.each do |user| %>
+      <%= link_to message_path(user.id), class: "message-thread" do %>
+        <img src="<%= user.avatar.attached? ? url_for(user.avatar) : 'default-avatar.png' %>" alt="<%= user.username %>" class="avatar">
+        <div class="thread-info">
+          <p class="username"><%= user.username %></p>
+          <p class="preview">Tap to view conversation</p>
+        </div>
+        <span class="time">now</span>
+      <% end %>
+    <% end %>
+  <% else %>
+    <p class="no-convos">Sem conversas </p>
+  <% end %>
+
+
+</div>
+
+<style>
+.messages-page {
+  padding: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  min-height: 100vh;
+}
+
+.message-thread {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+  text-decoration: none;
+  color: inherit;
+}
+
+.message-thread .avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.thread-info {
+  flex: 1;
+  margin-left: 12px;
+}
+
+.username { font-weight: bold; }
+.preview { color: gray; font-size: 13px; }
+.time { font-size: 12px; color: #999; }
+
+.no-convos, .no-following {
+  text-align: center;
+  color: #888;
+  margin: 20px 0;
+}
+
+.start-convo {
+  margin-top: 4px;
+  border-top: 1px solid #eee;
+  padding-top: 16px;
+}
+
+.start-convo h3 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.new-chat-btn {
+  display: block;
+  background: #f3f4f6;
+  padding: 10px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #111;
+  margin-bottom: 8px;
+  transition: background 0.2s;
+}
+
+.new-chat-btn:hover {
+  background: #e5e7eb;
+}
+</style>

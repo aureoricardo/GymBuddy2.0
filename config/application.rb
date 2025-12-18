@@ -1,3 +1,10 @@
+
+require_relative "boot"
+require "rails/all"
+require 'dotenv/load'  # ← Add this
+
+Bundler.require(*Rails.groups)
+
 require_relative "boot"
 
 require "rails"

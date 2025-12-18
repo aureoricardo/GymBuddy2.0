@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GymBuddy - Welcome</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <style>
+    /* Container */
+    .welcome-container {
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      overflow: scroll;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      position: relative;
+      padding: 0 1rem;
+      box-sizing: border-box;
+      font-family: system-ui, sans-serif;
+    }
+
+    /* Screens */
+    .screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.5s ease;
+      padding: 2rem;
+      box-sizing: border-box;
+    }
+
+    .hidden {
+      opacity: 0;
+      transform: translateX(100%);
+      pointer-events: none;
+    }
+
+    .visible {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: all;
+    }
+
+    .fade-out {
+      opacity: 0;
+      transform: translateX(-50px);
+      transition: all 0.5s ease;
+    }
+
+    /* App title and welcome text */
+    .app-title {
+      font-size: 4rem;
+      font-weight: 800;
+      color: white;
+      opacity: 0;
+      transform: translateY(-50px);
+      transition: all 1s ease-out;
+    }
+
+    .welcome-text {
+      font-size: 2rem;
+      font-weight: 600;
+      color: white;
+      margin-top: 1rem;
+      opacity: 0;
+      transform: translateY(50px);
+      transition: all 1s ease-out;
+    }
+
+    /* Auth buttons */
+    .auth-buttons {
+      margin-top: 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .auth-buttons button {
+      padding: 0.75rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .login-btn { background-color: white; color: #3b82f6; }
+    .login-btn:hover { background-color: #f0f0f0; }
+
+    .signup-btn { background-color: #3b82f6; color: white; }
+    .signup-btn:hover { background-color: #2563eb; }
+
+    /* Forms */
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+      max-width: 300px;
+      margin-top: 1rem;
+    }
+
+    .form-field {
+      opacity: 0;
+      transform: translateX(50px);
+      transition: all 0.5s ease;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      background-color: white;
+      color: #1f2937;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .form-field::placeholder { color: #9ca3af; }
+
+
+    .avatar-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.avatar-preview {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+
+    .form-submit {
+      background-color: #3b82f6;
+      color: white;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .form-submit:hover { background-color: #2563eb; }
+
+    /* Back button */
+    .back-btn {
+      position: absolute;
+      top: 1.5rem;
+      left: 1.5rem;
+      background: none;
+      border: none;
+      color: white;
+      text-decoration: underline;
+      font-size: 1rem;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    /* Form title */
+    .form-title {
+      font-size: 2rem;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .app-title { font-size: 3rem; }
+      .welcome-text { font-size: 1.5rem; }
+      .form-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="welcome-container">
+
+    <!-- Intro Screen -->
+    <div id="intro-screen" class="screen visible">
+      <h1 id="app-title" class="app-title">GymBuddy</h1>
+      <p id="welcome-text" class="welcome-text">Bem-Vindo</p>
+      <div id="auth-buttons" class="auth-buttons">
+        <button id="login-btn" class="login-btn">Já tenho conta</button>
+        <button id="signup-btn" class="signup-btn">Nào tenho conta</button>
+      </div>
+    </div>
+
+
+    
+    <!-- Login Screen -->
+    <div id="login-screen" class="screen hidden">
+      <button class="back-btn">← Voltar</button>
+      <h2 class="form-title">Entrar</h2>
+      <form action="<%= user_session_path %>" method="post" class="auth-form">
+        <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+        <input type="email" name="user[email]" placeholder="Email" required class="form-field">
+        <input type="password" name="user[password]" placeholder="Password" required class="form-field">
+        <button type="submit" class="form-submit form-field">Entrar</button>
+      </form>
+    </div>
+
+<!-- Sign Up Screen -->
+<div id="signup-screen" class="screen hidden">
+  <button class="back-btn">← Voltar</button>
+  <h2 class="form-title">Criar Conta</h2>
+
+  <%= form_with model: User.new, url: user_registration_path, local: true, multipart: true, html: { class: "auth-form" } do |f| %>
+    
+    <!-- Avatar Upload -->
+    <div class="avatar-upload">
+      <img id="avatarPreview" class="avatar-preview" src="" alt="Preview" style="display:none;">
+      <%= f.file_field :avatar, accept: "image/*", id: "avatarInput", class: "form-field" %>
+    </div>
+
+    <!-- Personal Info -->
+    <%= f.text_field :real_name, placeholder: "Nome Completo", required: true, class: "form-field" %>
+    <%= f.text_field :username, placeholder: "@nomeDeUsuario", required: true, class: "form-field" %>
+    <%= f.email_field :email, placeholder: "Email", required: true, class: "form-field" %>
+    <%= f.telephone_field :cellphone, placeholder: "Telemóvel", required: true, class: "form-field" %>
+    <%= f.password_field :password, placeholder: "Palavra-Passe", required: true, class: "form-field" %>
+    <%= f.password_field :password_confirmation, placeholder: "Confirmar Palavra-Passe", required: true, class: "form-field" %>
+
+    <!-- Lifting Stats -->
+    <%= f.number_field :deadlift, placeholder: "Deadlift", class: "form-field", min: 0 %>
+    <%= f.number_field :bench, placeholder: "Bench", class: "form-field", min: 0 %>
+    <%= f.number_field :squat, placeholder: "Squat", class: "form-field", min: 0 %>
+
+    <button type="submit" class="form-submit form-field">Criar conta</button>
+  <% end %>
+</div>
+
+
+  </div>
+
+  <script>
+    
+    // Avatar preview
+document.getElementById("avatarInput").addEventListener("change", function(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const preview = document.getElementById("avatarPreview");
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = "block";
+  }
+});
+
+    
+    
+    
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      const introScreen = document.getElementById('intro-screen');
+      const loginScreen = document.getElementById('login-screen');
+      const signupScreen = document.getElementById('signup-screen');
+
+      const loginBtn = document.getElementById('login-btn');
+      const signupBtn = document.getElementById('signup-btn');
+      const backBtns = document.querySelectorAll('.back-btn');
+
+      const appTitle = document.getElementById('app-title');
+      const welcomeText = document.getElementById('welcome-text');
+      const authButtons = document.getElementById('auth-buttons');
+
+      // Animate intro
+      setTimeout(() => { appTitle.style.opacity = 1; appTitle.style.transform = 'translateY(0)'; }, 500);
+      setTimeout(() => { welcomeText.style.opacity = 1; welcomeText.style.transform = 'translateY(0)'; }, 1500);
+      setTimeout(() => { authButtons.style.opacity = 1; }, 2500);
+
+      // Animate form fields sequentially
+      function animateFormFields(form) {
+        const fields = form.querySelectorAll('.form-field');
+        fields.forEach((field, i) => {
+          setTimeout(() => {
+            field.style.opacity = 1;
+            field.style.transform = 'translateX(0)';
+          }, i * 200);
+        });
+      }
+
+      function transitionScreens(fromScreen, toScreen) {
+        // Disable buttons to prevent double clicks
+        loginBtn.disabled = true;
+        signupBtn.disabled = true;
+
+        fromScreen.classList.add('fade-out');
+
+        setTimeout(() => {
+          fromScreen.classList.replace('visible', 'hidden');
+          fromScreen.classList.remove('fade-out');
+
+          toScreen.classList.replace('hidden', 'visible');
+          animateFormFields(toScreen.querySelector('.auth-form'));
+
+          // Re-enable buttons
+          loginBtn.disabled = false;
+          signupBtn.disabled = false;
+        }, 500); // matches CSS transition
+      }
+
+      loginBtn.addEventListener('click', () => transitionScreens(introScreen, loginScreen));
+      signupBtn.addEventListener('click', () => transitionScreens(introScreen, signupScreen));
+
+      // Back buttons
+      backBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          loginScreen.classList.replace('visible', 'hidden');
+          signupScreen.classList.replace('visible', 'hidden');
+          introScreen.classList.replace('hidden', 'visible');
+
+          document.querySelectorAll('.form-field').forEach(f => {
+            f.style.opacity = 0;
+            f.style.transform = 'translateX(50px)';
+          });
+        });
+      });
+    });
+  </script>
+</body>
+</html>
