@@ -83,4 +83,16 @@ Solução: integrar stripe
 
 Solução: os videos reels só podem ser adicionados nesse componente, um video de um post normal n vai aparecer automaticamente nos reels, ao fazer upload de um reel garantir que o sistema faz check das regras de upload de reel, como as dimensões do video e duração
 
-Observação: criar uma nova tabela pra registrar só posts que pas
+Observação: criar uma nova tabela pra registrar só posts que passem nas “regras do video reel” para poder diferenciar os videos normais e os reels 
+
+
+Tudo que funciona:
+
+1. Criação de user
+2. Autenticação 
+3. Criação de posts
+4. Mensagens em tempo real
+5. Notificações em tempo real
+6. Mapa que mostra a localização de ginásios a volta do user
+7. Search bar para poder pesquisar outros users
+8. Gostar, comentar ou guardar um post 
